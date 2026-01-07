@@ -10,166 +10,204 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-// IMAGEN: Debe ser ancha y de alta calidad
-const BG_IMAGE = "https://images.unsplash.com/photo-1635776062127-d379bfcba9f8?q=80&w=2832&auto=format&fit=crop";
-
+// Datos de los servicios (Eliminamos el color hardcoded)
 const services = [
   {
     id: "01",
     title: "IA Core",
-    desc: "Automatización neuronal.",
-    icon: <Bot className="w-6 h-6 text-white" />
+    desc: "Automatización neuronal y procesamiento de lenguaje natural avanzado.",
+    icon: <Bot className="w-8 h-8 text-violet-200" />, // Icono con tinte claro
+    image: "logo.png",
   },
   {
     id: "02",
-    title: "Ventas",
-    desc: "Cierre autónomo 24/7.",
-    icon: <Zap className="w-6 h-6 text-white" />
+    title: "Ventas Autónomas",
+    desc: "Agentes de cierre 24/7 que califican y convierten leads automáticamente.",
+    icon: <Zap className="w-8 h-8 text-violet-200" />,
+    image: "/logo1.png",
   },
   {
     id: "03",
-    title: "Data",
-    desc: "Predicción en tiempo real.",
-    icon: <BarChart3 className="w-6 h-6 text-white" />
+    title: "Data Predictiva",
+    desc: "Análisis en tiempo real para anticipar tendencias del mercado.",
+    icon: <BarChart3 className="w-8 h-8 text-violet-200" />,
+    image: "logo2.png",
   }
 ];
 
 export default function Services() {
   const container = useRef<HTMLDivElement>(null);
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const cardContainerRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
-    const wrapper = wrapperRef.current;
-    const cards = gsap.utils.toArray('.service-card');
-    const bgs = gsap.utils.toArray('.card-bg'); // Las imágenes de fondo
+    const mm = gsap.matchMedia();
+    const cardContainer = cardContainerRef.current;
+    const headerTitle = headerRef.current?.querySelector('h2');
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
+    // Validación de seguridad para TypeScript
+    if (!cardContainer || !headerTitle) return; 
+
+    let isGapAnimationCompleted = false;
+    let isFlipAnimationCompleted = false;
+
+    // --- LÓGICA DESKTOP (> 800px) ---
+    mm.add("(min-width: 800px)", () => {
+      ScrollTrigger.create({
         trigger: container.current,
         start: "top top",
-        end: "+=300%", 
+        end: "+=400%", 
+        scrub: 1,
         pin: true,
-        scrub: 1, // Suavizado de 1s para que tenga "peso"
-        anticipatePin: 1
-      }
+        anticipatePin: 1,
+        onUpdate: (self) => {
+          const progress = self.progress;
+
+          // FASE 1: HEADER
+          if (progress >= 0.1 && progress <= 0.25) {
+            const headerProgress = gsap.utils.mapRange(0.1, 0.25, 0, 1, progress);
+            const yValue = gsap.utils.mapRange(0, 1, 40, 0, headerProgress);
+            const opacityValue = gsap.utils.mapRange(0, 1, 0, 1, headerProgress);
+            gsap.set(headerTitle, { y: yValue, opacity: opacityValue });
+          } else if (progress < 0.1) {
+            gsap.set(headerTitle, { y: 40, opacity: 0 });
+          } else if (progress > 0.25) {
+            gsap.set(headerTitle, { y: 0, opacity: 1 });
+          }
+
+          // FASE 2: ANCHO
+          if (progress <= 0.25) {
+            const widthPercentage = gsap.utils.mapRange(0, 0.25, 75, 60, progress);
+            gsap.set(cardContainer, { width: `${widthPercentage}%` });
+          } else {
+            gsap.set(cardContainer, { width: `60%` });
+          }
+
+          // FASE 3: GAP & BORDER RADIUS
+          if (progress >= 0.35 && !isGapAnimationCompleted) {
+            gsap.to(cardContainer, { gap: "24px", duration: 0.5, ease: "power3.out" });
+            gsap.to(".service-card", { borderRadius: "24px", duration: 0.5, ease: "power3.out" });
+            isGapAnimationCompleted = true;
+          } 
+          else if (progress < 0.35 && isGapAnimationCompleted) {
+            gsap.to(cardContainer, { gap: "0px", duration: 0.5, ease: "power3.out" });
+            gsap.to(".service-card-0", { borderRadius: "24px 0 0 24px", duration: 0.5 });
+            gsap.to(".service-card-1", { borderRadius: "0px", duration: 0.5 });
+            gsap.to(".service-card-2", { borderRadius: "0 24px 24px 0", duration: 0.5 });
+            isGapAnimationCompleted = false;
+          }
+
+          // FASE 4: FLIP 3D
+          if (progress >= 0.7 && !isFlipAnimationCompleted) {
+            gsap.to(".service-card", { rotationY: 180, duration: 0.8, ease: "power3.out", stagger: 0.1 });
+            gsap.to([".service-card-0", ".service-card-2"], {
+              y: 60, rotationZ: (i) => i === 0 ? -15 : 15, duration: 0.75, ease: "power3.out"
+            });
+            isFlipAnimationCompleted = true;
+          } 
+          else if (progress < 0.7 && isFlipAnimationCompleted) {
+            gsap.to(".service-card", { rotationY: 0, duration: 0.8, ease: "power3.out", stagger: 0.1 });
+            gsap.to([".service-card-0", ".service-card-2"], {
+              y: 0, rotationZ: 0, duration: 0.75, ease: "power3.out"
+            });
+            isFlipAnimationCompleted = false;
+          }
+        }
+      });
     });
 
-    // --- FASE 1: LA FRACTURA (GAP + PARALLAX) ---
-    // 1. Abrimos el hueco entre las cartas (del centro hacia afuera)
-    tl.to(wrapper, {
-      gap: "24px", // Se separan hasta 24px
-      duration: 1,
-      ease: "power2.inOut"
-    }, "split");
-
-    // 2. Redondeamos las esquinas
-    tl.to(cards, {
-      borderRadius: "24px",
-      duration: 0.5,
-      ease: "power1.inOut"
-    }, "split");
-
-    // 3. TRUCO DEL VIDEO: Movemos ligeramente la imagen de fondo 
-    // para que parezca que la imagen se "estira" o reacciona al corte.
-    tl.to(bgs, {
-      scale: 1.1, // Zoom sutil
-      duration: 1,
-      ease: "power2.inOut"
-    }, "split");
-
-    // --- FASE 2: EL GIRO (FLIP) ---
-    // Giran una por una ("seguiditas")
-    tl.to(cards, {
-      rotationY: 180,
-      duration: 1.2,
-      stagger: 0.1, // Efecto cascada rápido
-      ease: "back.out(1.4)" // Rebote físico
-    }, "-=0.2"); // Se solapa casi al final de la separación
+    // --- LÓGICA MOBILE (< 800px) ---
+    mm.add("(max-width: 799px)", () => {
+      gsap.set(headerTitle, { opacity: 1, y: 0 });
+      gsap.set(cardContainer, { width: "100%", gap: "20px", transform: "none" });
+      gsap.set(".service-card", { borderRadius: "24px", rotationY: 0 });
+    });
 
   }, { scope: container });
 
   return (
-    <section ref={container} className="h-screen bg-black relative flex flex-col items-center justify-center overflow-hidden">
+    <section 
+      ref={container} 
+    className="relative w-full min-h-[140vh] bg-[#0a0a0c] text-white overflow-hidden flex flex-col items-center justify-start pt-64 pb-64 px-8"
+    >
       
-      <div className="absolute top-20 text-center z-20 px-4 pointer-events-none mix-blend-difference">
-        <h2 className="text-white text-5xl md:text-7xl font-bold tracking-tighter mb-2">
-          Habilidades
+      {/* --- HEADER --- */}
+      <div 
+        ref={headerRef} 
+        className="absolute top-[15%] left-1/2 -translate-x-1/2 z-10 text-center w-full px-4"
+      >
+        {/* DISEÑO: Tipografía con gradiente púrpura */}
+        <h2 className="text-4xl md:text-6xl font-bold tracking-tight opacity-0 translate-y-10">
+          caracteristicas del <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-fuchsia-500">Sistema</span>
         </h2>
       </div>
 
-      {/* --- WRAPPER FLEXBOX --- */}
-      {/* gap-0 inicial = Bloque Sólido */}
+      {/* --- CONTAINER DE CARTAS --- */}
       <div 
-        ref={wrapperRef}
-        className="relative flex w-full max-w-6xl h-[500px] gap-0 px-4 perspective-[2000px]"
+        ref={cardContainerRef}
+        className="card-container relative flex w-full md:w-[75%] h-[50vh] md:h-[60vh] perspective-[1000px] translate-y-10"
+        style={{ perspective: "1000px" }}
       >
         
         {services.map((item, i) => {
-          // Posición de la imagen calculada para ser continua
-          const bgPos = i === 0 ? "0% 50%" : i === 1 ? "50% 50%" : "100% 50%";
-          // Bordes iniciales rectos
-          const startRadius = i === 0 ? "24px 0 0 24px" : i === 2 ? "0 24px 24px 0" : "0px";
-
+          const initialRadius = i === 0 ? "24px 0 0 24px" : i === 2 ? "0 24px 24px 0" : "0px";
+          
           return (
             <div
-              key={i}
-              className="service-card relative flex-1 h-full cursor-pointer"
+              key={item.id}
+              className={`service-card service-card-${i} group relative flex-1 h-full cursor-pointer`}
               style={{ 
                 transformStyle: 'preserve-3d',
-                borderRadius: startRadius // Empieza como bloque
+                transformOrigin: 'center center',
+                borderRadius: initialRadius
               }}
             >
               {/* === CARA FRONTAL (IMAGEN) === */}
               <div 
-                className="absolute inset-0 w-full h-full overflow-hidden backface-hidden shadow-2xl"
-                style={{
-                  backfaceVisibility: 'hidden',
-                  borderRadius: 'inherit' // Hereda el borde dinámico
-                }}
+                className="card-front absolute inset-0 w-full h-full overflow-hidden backface-hidden"
+                style={{ backfaceVisibility: 'hidden', borderRadius: 'inherit' }}
               >
-                {/* DIV DE LA IMAGEN (Para poder escalarla con GSAP) */}
-                <div 
-                  className="card-bg absolute inset-0 w-full h-full"
-                  style={{
-                    backgroundImage: `url(${BG_IMAGE})`,
-                    backgroundSize: '300% 100%', // 300% cubre las 3 cartas
-                    backgroundPosition: bgPos
-                  }}
+                <img 
+                  src={item.image} 
+                  alt={item.title} 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
-                
-                {/* Overlay y Texto */}
-                <div className="absolute inset-0 bg-black/10" />
-                <div className="absolute bottom-8 left-8">
-                  <span className="text-white/50 text-xs font-mono mb-1 block">0{i + 1}</span>
-                  <h3 className="text-white text-2xl font-bold uppercase tracking-tight">{item.title}</h3>
-                </div>
+                {/* Overlay oscuro con tinte violeta */}
+                <div className="absolute inset-0 bg-neutral-950/40 mix-blend-multiply" />
+                <div className="absolute inset-0 bg-violet-900/20 mix-blend-overlay" />
               </div>
 
-              {/* === CARA TRASERA (INFO) === */}
+              {/* === CARA TRASERA (CONTENIDO - DISEÑO GLASSMORPHISM) === */}
               <div 
-                className="absolute inset-0 w-full h-full rounded-[24px] overflow-hidden bg-neutral-900 border border-white/10 p-8 flex flex-col justify-between backface-hidden"
-                style={{
-                  backfaceVisibility: 'hidden',
-                  transform: 'rotateY(180deg)'
+                className="card-back absolute inset-0 w-full h-full overflow-hidden flex flex-col items-center justify-center text-center p-6 md:p-8 backface-hidden transition-all duration-300"
+                style={{ 
+                  backfaceVisibility: 'hidden', 
+                  transform: 'rotateY(180deg)',
+                  borderRadius: 'inherit'
                 }}
               >
-                {/* Ruido */}
-                <div className="absolute inset-0 opacity-20 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
-                
-                <div className="relative z-10">
-                  <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center mb-6 border border-white/5">
+                {/* Fondo Glassmorphism */}
+                <div className="absolute inset-0 bg-gradient-to-br from-neutral-900/90 to-neutral-950/90 backdrop-blur-xl border border-white/10 group-hover:border-violet-500/50 transition-colors"></div>
+
+                {/* Contenido */}
+                <div className="relative z-10 flex flex-col items-center">
+                  <span className="absolute top-0 left-0 text-violet-300/40 text-sm font-mono">
+                    ( {item.id} )
+                  </span>
+                  
+                  {/* Icono con resplandor */}
+                  <div className="mb-6 p-4 rounded-2xl bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 border border-violet-500/30 shadow-[0_0_15px_rgba(167,139,250,0.2)] group-hover:shadow-[0_0_20px_rgba(167,139,250,0.4)] transition-shadow">
                     {item.icon}
                   </div>
-                  <h3 className="text-white text-2xl font-bold mb-3">{item.title}</h3>
-                  <div className="h-0.5 w-12 bg-violet-500 mb-4" />
-                  <p className="text-neutral-400 text-sm leading-relaxed">
+                  
+                  <h3 className="text-2xl md:text-3xl font-bold mb-3 text-white">{item.title}</h3>
+                  <p className="text-sm md:text-base font-medium text-neutral-300 leading-relaxed max-w-xs">
                     {item.desc}
                   </p>
-                </div>
 
-                <div className="relative z-10 pt-4">
-                  <button className="w-full py-4 border border-white/10 rounded-xl text-white text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-colors flex items-center justify-center gap-2">
-                    Ver Detalles <ArrowRight className="w-3 h-3" />
+                  {/* Botón estilo "Intelligent AI" */}
+                  <button className="mt-8 px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 border border-violet-500/30 text-violet-300 hover:bg-violet-500 hover:text-white hover:shadow-[0_0_20px_rgba(167,139,250,0.5)] flex items-center gap-2 group/btn">
+                     Explorar <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1"/>
                   </button>
                 </div>
               </div>

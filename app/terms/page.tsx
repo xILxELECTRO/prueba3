@@ -1,139 +1,232 @@
-import React from 'react';
+"use client";
+
+import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { 
+  Scale, 
+  FileText, 
+  ShieldAlert, 
+  CreditCard, 
+  UserX, 
+  RefreshCcw, 
+  Globe, 
+  Lock 
+} from 'lucide-react';
 
 export default function TermsPage() {
-  return (
-    // Mantenemos bg-transparent para el degradado maestro
-    <main className="min-h-screen bg-transparent text-neutral-300 selection:bg-violet-500/30">
-      <Navbar />
+  const [activeSection, setActiveSection] = useState('intro');
+
+  // Efecto para detectar qué sección está visible y actualizar el menú lateral
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = document.querySelectorAll('section[id]');
+      let current = '';
       
-      <div className="container mx-auto px-6 pt-32 pb-20 max-w-4xl">
+      sections.forEach((section) => {
+        const sectionTop = (section as HTMLElement).offsetTop;
+        if (window.scrollY >= sectionTop - 150) {
+          current = section.getAttribute('id') || '';
+        }
+      });
+      if (current) setActiveSection(current);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      window.scrollTo({
+        top: element.offsetTop - 100,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  return (
+    <main className="min-h-screen bg-black text-neutral-300 selection:bg-fuchsia-500/30">
+      <Navbar />
+
+      <div className="pt-32 pb-20 px-6 container mx-auto max-w-7xl">
         
-        {/* Encabezado */}
-        <div className="mb-12 border-b border-neutral-800 pb-8">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">
-            Términos y Condiciones
+        {/* HEADER */}
+        <div className="text-center mb-20 max-w-3xl mx-auto">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-fuchsia-500/20 bg-fuchsia-500/5 text-fuchsia-400 text-xs font-bold uppercase tracking-widest mb-6">
+            <Scale className="w-4 h-4" />
+            <span>Marco Legal</span>
+          </div>
+          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight">
+            Términos y Condiciones de Uso
           </h1>
-          <p className="text-neutral-500">
-            Última actualización: <span className="text-violet-400">15 de Diciembre, 2025</span>
+          <p className="text-lg text-neutral-400">
+            Última actualización: Enero 2026. Por favor lea estos términos cuidadosamente antes de utilizar nuestros servicios de Inteligencia Artificial.
           </p>
         </div>
 
-        <div className="space-y-12 text-sm md:text-base leading-relaxed text-neutral-400">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           
-          {/* SECCIÓN 1 */}
-          <section>
-            <h2 className="text-xl md:text-2xl font-bold text-white mb-4 flex items-center gap-2">
-              <span className="text-violet-500">01.</span> Aceptación de los Términos
-            </h2>
-            <p>
-              Bienvenido a <strong>Z&DInteligent.ai</strong>. Al acceder, registrarse o utilizar nuestros servicios de automatización de inteligencia artificial ("Servicios"), usted acepta estar legalmente vinculado por estos Términos y Condiciones ("Términos").
-            </p>
-            <p className="mt-2">
-              Si está celebrando este acuerdo en nombre de una empresa u otra entidad legal, usted declara que tiene la autoridad para vincular a dicha entidad a estos términos.
-            </p>
-          </section>
+          {/* --- SIDEBAR DE NAVEGACIÓN (STICKY) --- */}
+          <aside className="hidden lg:block lg:col-span-3">
+            <div className="sticky top-32 p-6 rounded-2xl bg-neutral-900/30 border border-white/5 backdrop-blur-sm">
+              <h3 className="text-white font-bold mb-4 px-2">Tabla de Contenidos</h3>
+              <nav className="space-y-1">
+                {tocItems.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => scrollToSection(item.id)}
+                    className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all duration-200 ${
+                      activeSection === item.id 
+                        ? 'bg-fuchsia-500/10 text-fuchsia-400 font-medium translate-x-1' 
+                        : 'text-neutral-400 hover:text-white hover:bg-white/5'
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </nav>
+            </div>
+          </aside>
 
-          {/* SECCIÓN 2 */}
-          <section>
-            <h2 className="text-xl md:text-2xl font-bold text-white mb-4 flex items-center gap-2">
-              <span className="text-violet-500">02.</span> Descripción del Servicio
-            </h2>
-            <p>
-              Z&DInteligent.ai proporciona una plataforma SaaS (Software as a Service) que permite a las empresas crear, gestionar y desplegar chatbots y agentes de inteligencia artificial para atención al cliente y ventas.
-            </p>
-            <p className="mt-2">
-              Nos reservamos el derecho de modificar, suspender o descontinuar cualquier parte del Servicio en cualquier momento, con o sin previo aviso, para realizar mantenimiento o mejoras.
-            </p>
-          </section>
-
-          {/* SECCIÓN 3 - CRÍTICA PARA IA */}
-          <section>
-            <div className="bg-neutral-900/50 border border-violet-500/20 p-6 rounded-xl">
-              <h2 className="text-xl md:text-2xl font-bold text-white mb-4 flex items-center gap-2">
-                <span className="text-violet-500">03.</span> Exactitud de la IA y Descargo de Responsabilidad
+          {/* --- CONTENIDO LEGAL --- */}
+          <div className="lg:col-span-9 space-y-16">
+            
+            {/* 1. INTRODUCCIÓN */}
+            <section id="intro" className="legal-section">
+              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                <FileText className="w-6 h-6 text-fuchsia-500" /> 1. Introducción y Aceptación
               </h2>
               <p className="mb-4">
-                Usted reconoce que los Servicios utilizan modelos de inteligencia artificial y aprendizaje automático que son probabilísticos por naturaleza.
+                Bienvenido a <strong>Z&DInteligent.ai</strong> ("Nosotros", "La Empresa"). Estos Términos y Condiciones ("Términos") rigen el acceso y uso de nuestra plataforma, software, APIs y servicios de automatización (colectivamente, el "Servicio").
               </p>
-              <ul className="list-disc pl-6 space-y-2 marker:text-violet-500">
-                <li><strong>Posibles Errores:</strong> La IA puede generar resultados incorrectos, ofensivos o sesgados ("alucinaciones"). Z&DInteligent.ai no garantiza la precisión, integridad o fiabilidad de ninguna respuesta generada por el bot.</li>
-                <li><strong>Supervisión Humana:</strong> Usted es responsable de supervisar y monitorear las interacciones de sus chatbots. No debe confiar en los Servicios para tomar decisiones legales, financieras o médicas sin verificación humana.</li>
-                <li><strong>Responsabilidad del Contenido:</strong> Usted asume toda la responsabilidad por el uso de las respuestas generadas y por cualquier daño derivado de dicho uso.</li>
+              <p className="p-4 bg-fuchsia-900/10 border-l-4 border-fuchsia-500 text-fuchsia-200 rounded-r-lg text-sm">
+                AL HACER CLIC EN "ACEPTAR", REGISTRARSE O UTILIZAR EL SERVICIO, USTED ACEPTA VINCULARSE LEGALMENTE A ESTOS TÉRMINOS. SI ESTÁ SUSCRIBIENDO ESTE ACUERDO EN NOMBRE DE UNA EMPRESA, USTED DECLARA QUE TIENE LA AUTORIDAD PARA VINCULAR A DICHA ENTIDAD.
+              </p>
+            </section>
+
+            {/* 2. CUENTAS */}
+            <section id="accounts">
+              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                <Lock className="w-6 h-6 text-fuchsia-500" /> 2. Cuentas y Seguridad
+              </h2>
+              <ul className="list-disc pl-5 space-y-3 text-neutral-400 marker:text-fuchsia-500">
+                <li><strong>Registro:</strong> Usted debe proporcionar información precisa y completa al crear su cuenta. Es su responsabilidad mantener esta información actualizada.</li>
+                <li><strong>Seguridad:</strong> Usted es responsable de salvaguardar la contraseña que utiliza para acceder al Servicio. Z&DInteligent.ai no será responsable de ninguna pérdida o daño derivado de su incumplimiento en proteger sus credenciales.</li>
+                <li><strong>Uso Compartido:</strong> Está prohibido compartir credenciales de acceso con terceros no autorizados. Cada licencia de usuario es personal e intransferible.</li>
               </ul>
+            </section>
+
+            {/* 3. PROPIEDAD INTELECTUAL */}
+            <section id="ip">
+              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                <ShieldAlert className="w-6 h-6 text-fuchsia-500" /> 3. Propiedad Intelectual y Contenido
+              </h2>
+              <div className="space-y-4">
+                <p><strong>3.1 Propiedad de la Plataforma:</strong> El Servicio, incluyendo su código fuente, algoritmos, diseño, logotipos y software subyacente, es propiedad exclusiva de Z&DInteligent.ai y está protegido por leyes de derechos de autor y propiedad industrial internacionales.</p>
+                <p><strong>3.2 Sus Datos (Input):</strong> Usted conserva todos los derechos sobre los datos, textos y archivos que suba a la plataforma ("Datos del Usuario").</p>
+                <p><strong>3.3 Resultados (Output):</strong> Z&DInteligent.ai le cede a usted todos los derechos, títulos e intereses sobre el contenido generado por la IA como resultado de sus inputs, sujeto al cumplimiento de estos términos y al pago de las tarifas correspondientes.</p>
+              </div>
+            </section>
+
+            {/* 4. IA Y RESPONSABILIDAD */}
+            <section id="ai-disclaimer">
+              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                <RefreshCcw className="w-6 h-6 text-orange-500" /> 4. Naturaleza de la Inteligencia Artificial
+              </h2>
+              <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6">
+                <p className="mb-4">
+                  El Usuario reconoce y acepta que los servicios basados en Inteligencia Artificial (IA) y Modelos de Lenguaje (LLMs):
+                </p>
+                <ul className="space-y-2 text-sm text-neutral-400">
+                  <li className="flex gap-2"><span className="text-orange-500">⚠</span> Pueden generar información incorrecta, ofensiva o sesgada ("Alucinaciones").</li>
+                  <li className="flex gap-2"><span className="text-orange-500">⚠</span> No deben utilizarse como única fuente para la toma de decisiones críticas (médicas, legales, financieras).</li>
+                  <li className="flex gap-2"><span className="text-orange-500">⚠</span> La calidad del resultado depende directamente de la calidad de las instrucciones (prompts) proporcionadas por el Usuario.</li>
+                </ul>
+                <p className="mt-4 font-medium text-white">
+                  Z&DInteligent.ai no garantiza la precisión absoluta de los resultados generados por la IA y se deslinda de cualquier responsabilidad por el uso que el Usuario dé a dicha información.
+                </p>
+              </div>
+            </section>
+
+            {/* 5. PAGOS */}
+            <section id="payments">
+              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                <CreditCard className="w-6 h-6 text-fuchsia-500" /> 5. Pagos, Facturación y Reembolsos
+              </h2>
+              <p className="mb-4">
+                El uso de ciertas funciones requiere el pago de tarifas de suscripción. Al contratar un plan de pago:
+              </p>
+              <ul className="list-disc pl-5 space-y-2 text-neutral-400 marker:text-fuchsia-500">
+                <li><strong>Facturación Automática:</strong> Las suscripciones se renuevan automáticamente al final de cada ciclo de facturación a menos que se cancelen con al menos 24 horas de antelación.</li>
+                <li><strong>Impuestos:</strong> Todos los precios mostrados son netos. El Usuario es responsable de pagar los impuestos aplicables (como el IVA en México) que se desglosarán en la factura.</li>
+                <li><strong>Política de Reembolsos:</strong> Debido a la naturaleza digital del servicio y los costos computacionales incurridos, <strong>no ofrecemos reembolsos</strong> por períodos parciales o meses no utilizados, salvo que la ley local exija lo contrario.</li>
+              </ul>
+            </section>
+
+            {/* 6. INDEMNIZACIÓN */}
+            <section id="indemnification">
+              <h2 className="text-2xl font-bold text-white mb-6">6. Indemnización</h2>
+              <p>
+                Usted acepta defender, indemnizar y eximir de responsabilidad a Z&DInteligent.ai, sus directores, empleados y afiliados, frente a cualquier reclamo, daño, obligación, pérdida, responsabilidad, costo o deuda y gasto (incluyendo honorarios de abogados) que surjan de: (i) su uso y acceso al Servicio; (ii) su violación de cualquier término de estos Términos; o (iii) su violación de cualquier derecho de un tercero, incluyendo derechos de autor o privacidad.
+              </p>
+            </section>
+
+            {/* 7. TERMINACIÓN */}
+            <section id="termination">
+              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                <UserX className="w-6 h-6 text-red-500" /> 7. Suspensión y Terminación
+              </h2>
+              <p className="mb-4">
+                Podemos terminar o suspender su cuenta de forma inmediata, sin previo aviso ni responsabilidad, por cualquier motivo, incluyendo, entre otros:
+              </p>
+              <div className="grid md:grid-cols-2 gap-4 text-sm">
+                <div className="bg-neutral-900 p-4 rounded-lg border border-neutral-800">
+                  <span className="text-red-400 font-bold block mb-1">Falta de Pago</span>
+                  Si sus métodos de pago son rechazados tras múltiples intentos.
+                </div>
+                <div className="bg-neutral-900 p-4 rounded-lg border border-neutral-800">
+                  <span className="text-red-400 font-bold block mb-1">Uso Indebido</span>
+                  Uso del servicio para spam, actividades ilegales o ingeniería inversa.
+                </div>
+              </div>
+            </section>
+
+            {/* 8. LEY APLICABLE */}
+            <section id="law">
+              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                <Globe className="w-6 h-6 text-fuchsia-500" /> 8. Ley Aplicable y Jurisdicción
+              </h2>
+              <p>
+                Estos Términos se regirán por las leyes de los <strong>Estados Unidos Mexicanos</strong>. Cualquier disputa relacionada con estos Términos se someterá a la jurisdicción exclusiva de los tribunales competentes en el Estado de México o Ciudad de México, renunciando el Usuario a cualquier otro fuero que pudiera corresponderle por su domicilio presente o futuro.
+              </p>
+            </section>
+
+            {/* CONTACTO */}
+            <div className="border-t border-neutral-800 pt-10 mt-20">
+              <h3 className="text-xl font-bold text-white mb-2">¿Dudas Legales?</h3>
+              <p className="text-neutral-500">
+                Si tiene preguntas sobre cómo interpretamos estos términos, contáctenos en: <a href="mailto:legal@zdinteligent.ai" className="text-fuchsia-400 hover:text-white underline decoration-fuchsia-500/30">legal@zdinteligent.ai</a>
+              </p>
             </div>
-          </section>
 
-          {/* SECCIÓN 4 */}
-          <section>
-            <h2 className="text-xl md:text-2xl font-bold text-white mb-4 flex items-center gap-2">
-              <span className="text-violet-500">04.</span> Propiedad Intelectual
-            </h2>
-            <ul className="list-disc pl-6 space-y-2 marker:text-violet-500">
-              <li><strong>Nuestra Propiedad:</strong> La plataforma, el código fuente, los algoritmos, los logotipos y el diseño de Z&DInteligent.ai son propiedad exclusiva de la Empresa y están protegidos por leyes de derechos de autor.</li>
-              <li><strong>Sus Datos:</strong> Usted conserva todos los derechos sobre los datos, textos y archivos que suba a la plataforma ("Datos del Cliente") para entrenar a sus bots. Usted nos otorga una licencia limitada para procesar estos datos únicamente con el fin de prestarle el servicio.</li>
-            </ul>
-          </section>
-
-          {/* SECCIÓN 5 */}
-          <section>
-            <h2 className="text-xl md:text-2xl font-bold text-white mb-4 flex items-center gap-2">
-              <span className="text-violet-500">05.</span> Pagos y Cancelación
-            </h2>
-            <p className="mb-4">
-              Los servicios se ofrecen bajo modelos de suscripción (mensual o anual).
-            </p>
-            <ul className="list-disc pl-6 space-y-2 marker:text-violet-500">
-              <li><strong>Facturación:</strong> Los cargos se realizan por adelantado al inicio de cada ciclo de facturación.</li>
-              <li><strong>No Reembolsos:</strong> Los pagos no son reembolsables, incluidos los meses parciales o los servicios no utilizados, excepto cuando la ley lo exija.</li>
-              <li><strong>Cancelación:</strong> Puede cancelar su suscripción en cualquier momento desde su panel de control. El servicio continuará activo hasta el final del período pagado.</li>
-            </ul>
-          </section>
-
-          {/* SECCIÓN 6 */}
-          <section>
-            <h2 className="text-xl md:text-2xl font-bold text-white mb-4 flex items-center gap-2">
-              <span className="text-violet-500">06.</span> Limitación de Responsabilidad
-            </h2>
-            <p className="uppercase tracking-widest text-xs font-bold mb-2 text-neutral-500">Léase cuidadosamente</p>
-            <p>
-              En la máxima medida permitida por la ley aplicable, Z&DInteligent.ai NO será responsable por daños indirectos, incidentales, especiales, consecuentes o punitivos, incluyendo pérdida de beneficios, datos o interrupción del negocio, que surjan del uso o la imposibilidad de usar nuestros servicios, incluso si se nos ha advertido de la posibilidad de tales daños.
-            </p>
-          </section>
-
-          {/* SECCIÓN 7 */}
-          <section>
-            <h2 className="text-xl md:text-2xl font-bold text-white mb-4 flex items-center gap-2">
-              <span className="text-violet-500">07.</span> Uso Prohibido
-            </h2>
-            <p>Usted acepta no utilizar el Servicio para:</p>
-            <ul className="list-disc pl-6 mt-4 space-y-2 marker:text-violet-500">
-              <li>Generar o difundir contenido ilegal, difamatorio, pornográfico o de odio.</li>
-              <li>Realizar ingeniería inversa del código fuente de la plataforma.</li>
-              <li>Intentar dañar o interrumpir el servicio (ataques DDoS, inyección de virus).</li>
-              <li>Crear bots que se hagan pasar por humanos con fines fraudulentos (Scam/Phishing).</li>
-            </ul>
-            <p className="mt-4 text-red-400">
-              La violación de estas normas resultará en la terminación inmediata de su cuenta sin derecho a reembolso.
-            </p>
-          </section>
-
-          {/* SECCIÓN 8 */}
-          <section className="border-t border-neutral-800 pt-8 mt-12">
-            <h2 className="text-xl font-bold text-white mb-4">Legislación Aplicable y Contacto</h2>
-            <p className="mb-4">
-              Estos términos se regirán e interpretarán de acuerdo con las leyes vigentes en su jurisdicción.
-            </p>
-            <p>
-              Para cualquier duda legal relacionada con estos términos, contáctenos en: <span className="text-violet-400 font-medium">legal@zdinteligent.ai</span>
-            </p>
-          </section>
-
+          </div>
         </div>
       </div>
-
       <Footer />
     </main>
   );
 }
+
+// Datos para la tabla de contenidos
+const tocItems = [
+  { id: 'intro', label: '1. Introducción' },
+  { id: 'accounts', label: '2. Cuentas y Seguridad' },
+  { id: 'ip', label: '3. Propiedad Intelectual' },
+  { id: 'ai-disclaimer', label: '4. Aviso sobre IA' },
+  { id: 'payments', label: '5. Pagos y Reembolsos' },
+  { id: 'indemnification', label: '6. Indemnización' },
+  { id: 'termination', label: '7. Terminación' },
+  { id: 'law', label: '8. Ley Aplicable' },
+];

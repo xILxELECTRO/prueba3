@@ -26,18 +26,26 @@ export default function Hero() {
           Implementamos chatbots inteligentes que entienden tu negocio, responden al instante y cierran ventas 24/7 en tu sitio web y WhatsApp.
         </p>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <button className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-violet-500 to-fuchsia-600 hover:from-violet-400 hover:to-fuchsia-500 text-white font-bold rounded-lg shadow-lg shadow-violet-500/25 transition-all flex items-center justify-center gap-2 group">
-            Empezar Ahora
-            <ArrowRight className="w-4 h-4 group-hover:tranwhite-x-1 transition-transform" />
-          </button>
-          <a 
-            href="#demo"
-            className="w-full sm:w-auto px-8 py-4 bg-white-900 border border-white-800 hover:bg-white-800 text-white font-semibold rounded-lg transition-all"
-          >
-            Ver Demo en Vivo
-          </a>
-        </div>
+        {/* --- SECCIÓN DE BOTONES ACTUALIZADA --- */}
+<div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10">
+  
+  {/* Botón Único: "Ver Demo en Vivo" con el estilo gráfico del otro */}
+  <a
+    href="/#demo" // Asegúrate de que este enlace sea el correcto para tu demo
+    className="group relative inline-flex items-center justify-center px-8 py-4 font-bold text-white transition-all duration-300 bg-gradient-to-r from-violet-600 to-fuchsia-600 rounded-xl hover:bg-gradient-to-l hover:from-fuchsia-600 hover:to-violet-600 hover:shadow-lg hover:shadow-violet-500/50 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:ring-offset-2 focus:ring-offset-neutral-950"
+  >
+    {/* Capa opcional para un brillo extra al hacer hover (Absolute positioning) */}
+    <span className="absolute inset-0 w-full h-full transition duration-300 transform -translate-x-1 -translate-y-1 bg-inherit opacity-0 group-hover:opacity-20 group-hover:translate-x-0 group-hover:translate-y-0 rounded-xl blur-md"></span>
+    
+    {/* Texto del botón */}
+    <span className="relative z-10 flex items-center gap-2">
+      Ver Demo en Vivo
+      {/* Si quieres agregar la flecha también, descomenta la siguiente línea: */}
+      {/* <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 transition-transform group-hover:translate-x-1"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg> */}
+    </span>
+  </a>
+
+</div>
 
         <div className="mt-16 pt-8 border-t border-white-800/50 flex flex-wrap justify-center gap-8 text-sm text-white-500 font-medium">
           <div className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-violet-500" /> Sin tarjetas de crédito</div>
