@@ -15,7 +15,6 @@ interface StaggeredMenuProps {
   accentColor?: string;
 }
 
-// --- SUB-COMPONENTE: LINK CON SCRAMBLE Y HOVER ---
 const MenuItemRow = ({ 
   item, 
   index, 
@@ -32,28 +31,22 @@ const MenuItemRow = ({
   const [displayText, setDisplayText] = useState(item.label);
   const chars = "ABCDEF0123456789_@#&%";
 
-  // Efecto Scramble (Matrix) al hacer hover
   useEffect(() => {
     if (!isHovered) {
       setDisplayText(item.label);
       return;
     }
-
     let iterations = 0;
     const interval = setInterval(() => {
       setDisplayText(
-        item.label
-          .split("")
-          .map((letter, i) => {
+        item.label.split("").map((letter, i) => {
             if (i < iterations) return item.label[i];
             return chars[Math.floor(Math.random() * chars.length)];
-          })
-          .join("")
+          }).join("")
       );
       if (iterations >= item.label.length) clearInterval(interval);
       iterations += 1 / 2;
     }, 30);
-
     return () => clearInterval(interval);
   }, [isHovered, item.label]);
 
@@ -69,25 +62,17 @@ const MenuItemRow = ({
       transition={{ delay: 0.1 + index * 0.1 }}
     >
       <div className="flex items-center gap-4">
-        {/* Índice pequeño */}
-        <span className={`text-[9px] font-mono transition-colors duration-300 ${isHovered ? 'text-violet-400' : 'text-neutral-600'}`}>
+        <span className={`text-[9px] font-mono transition-colors duration-300 ${isHovered ? 'text-purple-600' : 'text-slate-400'}`}>
           0{index + 1}
         </span>
-        
-        {/* Texto Principal */}
-        <span className={`text-lg font-bold tracking-tight uppercase transition-colors duration-300 ${isHovered ? 'text-white' : 'text-neutral-400'}`}>
+        <span className={`text-lg font-black tracking-tight uppercase transition-colors duration-300 ${isHovered ? 'text-purple-700' : 'text-slate-700'}`}>
           {displayText}
         </span>
       </div>
 
-      {/* Flecha que aparece */}
       <motion.div
-        animate={{ 
-          opacity: isHovered ? 1 : 0,
-          x: isHovered ? 0 : -10,
-          rotate: isHovered ? 45 : 0
-        }}
-        className="text-violet-400"
+        animate={{ opacity: isHovered ? 1 : 0, x: isHovered ? 0 : -10, rotate: isHovered ? 45 : 0 }}
+        className="text-purple-600"
       >
         <ArrowUpRight className="w-5 h-5" />
       </motion.div>
@@ -95,139 +80,92 @@ const MenuItemRow = ({
   );
 };
 
-// --- COMPONENTE PRINCIPAL ---
 export default function StaggeredMenu({ 
   items = [], 
-  menuButtonColor = "#ffffff", 
+  menuButtonColor = "#1a202c", 
 }: StaggeredMenuProps) {
   
   const [isOpen, setIsOpen] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   const menuVariants: Variants = {
-    closed: { 
-      opacity: 0, 
-      scale: 0.9, 
-      y: -20,
-      filter: "blur(10px)",
-      transition: { duration: 0.2 }
-    },
-    open: { 
-      opacity: 1, 
-      scale: 1, 
-      y: 0, 
-      filter: "blur(0px)",
-      transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] }
-    }
+    closed: { opacity: 0, scale: 0.9, y: -20, filter: "blur(10px)", transition: { duration: 0.2 } },
+    open: { opacity: 1, scale: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } }
   };
 
   return (
     <div className="relative z-50">
       
-      {/* === BOTÓN PRINCIPAL (Más grande y llamativo) === */}
+      {/* BOTÓN PRINCIPAL */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="group relative flex items-center gap-4 px-6 py-3 rounded-full bg-black/50 border border-white/10 hover:border-violet-500/50 hover:bg-black/80 transition-all duration-300 backdrop-blur-md"
+        className="group relative flex items-center gap-4 px-6 py-3 rounded-full bg-white/80 border border-purple-200 hover:border-purple-500 hover:bg-purple-50 transition-all duration-300 backdrop-blur-md shadow-sm"
       >
         <span 
           className="text-xs font-bold tracking-[0.2em] uppercase transition-colors"
-          style={{ color: isOpen ? '#fff' : menuButtonColor }}
+          style={{ color: isOpen ? '#9333ea' : menuButtonColor }}
         >
           {isOpen ? "CERRAR" : "MENÚ"}
         </span>
 
-        {/* Separador vertical */}
-        <div className="w-[1px] h-4 bg-white/10"></div>
+        <div className="w-[1px] h-4 bg-purple-200"></div>
 
-        {/* Icono con animación de rotación */}
         <div className="relative">
-            <motion.div
-              animate={{ rotate: isOpen ? 90 : 0 }}
-              transition={{ duration: 0.3 }}
-            >
-               {isOpen ? <X className="w-5 h-5 text-violet-400" /> : <Menu className="w-5 h-5 text-white" />}
+            <motion.div animate={{ rotate: isOpen ? 90 : 0 }} transition={{ duration: 0.3 }}>
+               {isOpen ? <X className="w-5 h-5 text-purple-600" /> : <Menu className="w-5 h-5 text-[#1a202c]" />}
             </motion.div>
         </div>
       </button>
 
-      {/* === PANEL DEL MENÚ === */}
+      {/* PANEL DEL MENÚ */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial="closed"
-            animate="open"
-            exit="closed"
-            variants={menuVariants}
-            className="absolute top-full right-0 mt-6 w-[350px] overflow-hidden rounded-3xl border border-white/10 bg-[#050505]/95 backdrop-blur-3xl shadow-[0_30px_60px_-15px_rgba(0,0,0,1)]"
+            initial="closed" animate="open" exit="closed" variants={menuVariants}
+            className="absolute top-full right-0 mt-6 w-[350px] overflow-hidden rounded-3xl border border-purple-100 bg-white/95 backdrop-blur-3xl shadow-[0_30px_60px_-15px_rgba(147,51,234,0.15)]"
           >
-            {/* Decoración: Borde superior brillante */}
-            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-violet-500/50 to-transparent"></div>
+            <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-purple-400 via-fuchsia-400 to-purple-400"></div>
             
-            {/* Cabecera Técnica */}
-            <div className="px-6 py-5 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
+            <div className="px-6 py-5 border-b border-purple-50 flex items-center justify-between bg-slate-50/50">
                 <div className="flex items-center gap-3">
-                    <div className="p-1.5 rounded-md bg-violet-500/10 border border-violet-500/20">
-                        <Aperture className="w-3.5 h-3.5 text-violet-400 animate-spin-slow" />
+                    <div className="p-1.5 rounded-md bg-purple-100 border border-purple-200">
+                        <Aperture className="w-3.5 h-3.5 text-purple-600 animate-spin-slow" />
                     </div>
-                    <span className="text-[10px] uppercase tracking-widest text-neutral-400 font-mono">
-                        NAVEGACIÓN
+                    <span className="text-[10px] uppercase tracking-widest text-slate-500 font-mono font-bold">
+                        EXPLORAR
                     </span>
                 </div>
-                {/* Indicador de estado */}
                 <div className="flex gap-1.5">
-                    <span className="w-1 h-1 rounded-full bg-neutral-600"></span>
-                    <span className="w-1 h-1 rounded-full bg-neutral-600"></span>
-                    <span className="w-1 h-1 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]"></span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-purple-200"></span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-purple-600 shadow-[0_0_8px_rgba(147,51,234,0.5)]"></span>
                 </div>
             </div>
 
-            {/* LISTA DE ENLACES CON FONDO DE LUZ MÓVIL */}
             <div className="relative py-2 flex flex-col">
-                
-                {/* EL FONDO DE LUZ QUE SIGUE AL CURSOR (Spotlight) */}
                 {hoveredIndex !== null && (
                     <motion.div
                         layoutId="menu-hover-bg"
-                        className="absolute left-2 right-2 rounded-xl bg-white/5 border border-white/5"
+                        className="absolute left-2 right-2 rounded-xl bg-purple-50 border border-purple-100"
                         initial={{ opacity: 0 }}
-                        animate={{ 
-                            opacity: 1,
-                            // Calculamos la posición aproximada basándonos en la altura de cada ítem (aprox 68px)
-                            top: 8 + (hoveredIndex * 68), 
-                            height: 64 
-                        }}
+                        animate={{ opacity: 1, top: 8 + (hoveredIndex * 68), height: 64 }}
                         exit={{ opacity: 0 }}
                         transition={{ type: "spring", bounce: 0.2, duration: 0.3 }}
                     >
-                        {/* Brillo lateral violeta */}
-                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-violet-500/50 rounded-r-full blur-[2px]"></div>
+                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-purple-600 rounded-r-full"></div>
                     </motion.div>
                 )}
 
-                {/* ITEMS */}
                 <div className="relative z-10">
-                    {items.length > 0 ? (
-                        items.map((item, idx) => (
-                        <MenuItemRow 
-                            key={idx}
-                            index={idx}
-                            item={item}
-                            onClick={() => setIsOpen(false)}
-                            onHover={setHoveredIndex}
-                            isHovered={hoveredIndex === idx}
-                        />
-                        ))
-                    ) : (
-                        <div className="p-8 text-center text-xs text-neutral-600 font-mono">
-                           // SIN ENLACES
-                        </div>
-                    )}
+                    {items.map((item, idx) => (
+                    <MenuItemRow 
+                        key={idx} index={idx} item={item}
+                        onClick={() => setIsOpen(false)}
+                        onHover={setHoveredIndex}
+                        isHovered={hoveredIndex === idx}
+                    />
+                    ))}
                 </div>
             </div>
-
-            {/* Decoración Inferior */}
-            <div className="h-1 w-full bg-gradient-to-r from-violet-600/20 via-fuchsia-600/20 to-violet-600/20"></div>
-
           </motion.div>
         )}
       </AnimatePresence>

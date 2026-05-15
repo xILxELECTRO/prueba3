@@ -2,41 +2,67 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
-import { ArrowDownRight, Terminal } from 'lucide-react';
+import { Sparkles, Users } from 'lucide-react'; // Actualizamos la importación de iconos
 
-// --- CONFIGURACIÓN ---
-const WORDS = ["AUTÓNOMO", "INTELIGENTE", "PREDICTIVO", "SIN LÍMITES"];
-const CHANGE_SPEED = 3000; // Cambia cada 3 segundos
+// --- CONFIGURACIÓN SILENTHELP ---
+const WORDS = ["SIN LÍMITES.", "SIN BARRERAS.", "CON EMPATÍA.", "PARA TODOS."];
 
-// --- COMPONENTE 1: TEXTO QUE SE DECODIFICA (SCRAMBLE) ---
-const ScrambleText = ({ text }: { text: string }) => {
-  const [displayText, setDisplayText] = useState(text);
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*";
+// --- COMPONENTE 1: EFECTO MÁQUINA DE ESCRIBIR ---
+const TypewriterText = ({ words }: { words: string[] }) => {
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
+  const [currentText, setCurrentText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    let iterations = 0;
-    
-    const interval = setInterval(() => {
-      setDisplayText(
-        text
-          .split("")
-          .map((letter, index) => {
-            if (index < iterations) return text[index];
-            return chars[Math.floor(Math.random() * chars.length)];
-          })
-          .join("")
-      );
+    setIsMounted(true);
+  }, []);
 
-      if (iterations >= text.length) clearInterval(interval);
-      iterations += 1 / 3; 
-    }, 30);
+  useEffect(() => {
+    if (!isMounted) return;
 
-    return () => clearInterval(interval);
-  }, [text]);
+    const typingSpeed = 100;
+    const deletingSpeed = 60;
+    const delayBetweenWords = 2500; 
+
+    const currentFullWord = words[currentWordIndex];
+
+    const timer = setTimeout(() => {
+      if (!isDeleting) {
+        setCurrentText(currentFullWord.substring(0, currentText.length + 1));
+        if (currentText === currentFullWord) {
+          setTimeout(() => setIsDeleting(true), delayBetweenWords);
+        }
+      } else {
+        setCurrentText(currentFullWord.substring(0, currentText.length - 1));
+        if (currentText === "") {
+          setIsDeleting(false);
+          setCurrentWordIndex((prev) => (prev + 1) % words.length);
+        }
+      }
+    }, isDeleting ? deletingSpeed : typingSpeed);
+
+    return () => clearTimeout(timer);
+  }, [currentText, isDeleting, currentWordIndex, words, isMounted]);
+
+  if (!isMounted) {
+    return (
+      <span className="inline-flex items-center justify-center min-h-[1.2em] mt-2">
+        <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-fuchsia-500 to-purple-600 font-black">&nbsp;</span>
+      </span>
+    );
+  }
 
   return (
-    <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-fuchsia-300 to-violet-400 font-mono">
-      {displayText}
+    <span className="inline-flex items-center justify-center min-h-[1.2em] mt-2">
+      <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-fuchsia-500 to-purple-600 font-black">
+        {currentText}
+      </span>
+      <motion.span
+        animate={{ opacity: [0, 1, 0] }}
+        transition={{ repeat: Infinity, duration: 0.9, ease: "linear" }}
+        className="inline-block w-[4px] md:w-[8px] h-[0.9em] bg-fuchsia-500 ml-2 rounded-full"
+      />
     </span>
   );
 };
@@ -47,36 +73,34 @@ const MagneticButton = ({ href }: { href: string }) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
-  const springConfig = { damping: 15, stiffness: 150, mass: 0.1 };
+  const springConfig = { damping: 20, stiffness: 150, mass: 0.2 };
   const springX = useSpring(x, springConfig);
   const springY = useSpring(y, springConfig);
 
   const handleMouseMove = (e: React.MouseEvent) => {
     const { clientX, clientY } = e;
     const { height, width, left, top } = ref.current!.getBoundingClientRect();
-    x.set((clientX - (left + width / 2)) * 0.5);
-    y.set((clientY - (top + height / 2)) * 0.5);
+    x.set((clientX - (left + width / 2)) * 0.3); 
+    y.set((clientY - (top + height / 2)) * 0.3);
   };
 
   const reset = () => { x.set(0); y.set(0); };
 
   return (
     <motion.a
-      href={href}
-      ref={ref}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={reset}
+      href={href} ref={ref} onMouseMove={handleMouseMove} onMouseLeave={reset}
       style={{ x: springX, y: springY }}
-      className="group relative inline-flex items-center justify-center z-20"
+      className="group relative inline-flex items-center justify-center z-20 mt-4"
     >
-      {/* Brillo detrás del botón */}
-      <div className="absolute inset-0 bg-violet-500/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+      <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-full blur-md opacity-20 group-hover:opacity-60 transition duration-500 group-hover:duration-200"></div>
       
-      {/* Botón Sólido */}
-      <div className="relative px-8 py-4 bg-white text-black font-bold text-lg rounded-full flex items-center gap-3 shadow-[0_0_20px_rgba(255,255,255,0.3)] transition-transform hover:scale-105">
-        <span className="relative z-10">Agendar Demo</span>
-        <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center text-white group-hover:rotate-[-45deg] transition-transform duration-300">
-           <ArrowDownRight className="w-5 h-5" />
+      <div className="relative px-8 py-4 bg-purple-600 text-white font-bold text-lg rounded-full flex items-center gap-4 shadow-xl border border-purple-500 transition-transform duration-300 group-hover:scale-[1.02]">
+        {/* Cambiamos el texto para hacer alusión a la página de Quiénes Somos */}
+        <span className="relative z-10 tracking-wide">Nuestra Misión</span>
+        
+        <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center text-white group-hover:rotate-[360deg] transition-all duration-500 shadow-inner">
+           {/* Incorporamos el icono de usuarios */}
+           <Users className="w-5 h-5" />
         </div>
       </div>
     </motion.a>
@@ -85,51 +109,48 @@ const MagneticButton = ({ href }: { href: string }) => {
 
 // --- HERO PRINCIPAL ---
 export default function Hero() {
-  const [index, setIndex] = useState(0);
-
-  // Lógica para rotar las palabras cada X segundos
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % WORDS.length);
-    }, CHANGE_SPEED);
-    return () => clearInterval(interval);
-  }, []);
-
   return (
-    <section className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden bg-transparent perspective-1000">
+    <section className="relative w-full min-h-screen flex flex-col justify-between items-center overflow-hidden bg-transparent perspective-1000 pt-32 pb-8 z-10">
       
-      {/* NOTA: El fondo de hexágonos viene del layout.tsx, aquí es transparente */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[40vh] bg-purple-400/10 blur-[100px] rounded-[100%] pointer-events-none -z-10"></div>
 
-      {/* --- CONTENIDO CENTRAL --- */}
-      <div className="relative z-10 container px-4 text-center flex flex-col items-center">
+      <div className="flex-1 flex flex-col items-center justify-center w-full px-4 text-center mt-10">
         
-        {/* Etiqueta Superior */}
-        
+        <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/60 backdrop-blur-md rounded-full border border-purple-100 shadow-sm mb-8 text-purple-700 cursor-default">
+            <Sparkles className="w-4 h-4 text-fuchsia-500" />
+            <span className="font-mono text-[10px] tracking-[0.25em] uppercase font-bold text-[#1a202c]">
+              App de Lengua de Señas Mexicana
+            </span>
+        </div>
 
-        {/* TÍTULO CAMBIANTE */}
-        <h1 className="text-6xl md:text-8xl lg:text-[9rem] font-black tracking-tighter text-white mb-8 leading-[0.9] select-none flex flex-col items-center drop-shadow-2xl">
-          <span className="block text-white">
-            FUTURO
+        <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[8rem] font-black tracking-tighter text-[#1a202c] mb-8 leading-[0.9] flex flex-col items-center">
+          <span className="block relative uppercase">
+            Comunica
           </span>
-          
-          {/* Aquí ocurre la magia del cambio de texto */}
-          <div className="h-[1.1em] overflow-hidden"> {/* Altura fija para evitar saltos */}
-             <ScrambleText text={WORDS[index]} />
-          </div>
+          <TypewriterText words={WORDS} />
         </h1>
 
-        <p className="max-w-xl text-lg md:text-xl text-neutral-400 mb-12 font-light leading-relaxed">
-          Deja de operar manualmente. Permite que nuestros agentes de IA tomen el control y escalen tu negocio mientras duermes.
-        </p>
+        <div className="flex flex-col items-center gap-2 mb-8">
+          <p className="text-lg md:text-xl text-slate-500 font-light max-w-2xl leading-relaxed">
+            Aprende y traduce Lengua de Señas Mexicana utilizando Inteligencia Artificial.
+          </p>
+          <h2 className="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-fuchsia-600 mt-2">
+            Transformando el silencio en conexión.
+          </h2>
+        </div>
 
-        {/* Botón Único */}
-        <MagneticButton href="#demo" />
+        {/* --- ENLACE ACTUALIZADO HACIA /ABOUT --- */}
+        <MagneticButton href="/about" />
 
       </div>
 
-      {/* Decoración sutil inferior */}
-      <div className="absolute bottom-10 animate-bounce text-neutral-600">
-        <div className="w-[1px] h-16 bg-gradient-to-b from-transparent via-neutral-500 to-transparent"></div>
+      <div className="flex flex-col items-center gap-3 opacity-60 hover:opacity-100 transition-opacity mt-12">
+        <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-purple-600 font-bold">Descubre Más</span>
+        <motion.div
+          animate={{ y: [0, 8, 0] }}
+          transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+          className="w-[2px] h-12 bg-gradient-to-b from-purple-500 to-transparent rounded-full"
+        />
       </div>
 
     </section>

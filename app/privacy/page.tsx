@@ -7,17 +7,22 @@ import {
   Shield, 
   Lock, 
   Eye, 
-  Database, 
+  Camera, 
   Globe, 
   Mail, 
-  Server,
-  FileText
+  FileText,
+  Database // <-- ¡Aquí estaba el detalle! Ya agregamos el icono que faltaba
 } from 'lucide-react';
 
-export default function PrivacyPage() {
-  const [activeSection, setActiveSection] = useState('intro');
+// Definimos la estructura que deben tener los elementos de la tabla de contenidos
+interface TocItem {
+  id: string;
+  label: string;
+}
 
-  // Efecto para detectar sección activa al hacer scroll
+export default function PrivacyPage() {
+  const [activeSection, setActiveSection] = useState<string>('intro');
+
   useEffect(() => {
     const handleScroll = () => {
       const sections = document.querySelectorAll('section[id]');
@@ -47,22 +52,25 @@ export default function PrivacyPage() {
   };
 
   return (
-    <main className="min-h-screen bg-black text-neutral-300 selection:bg-violet-500/30">
+    <main className="min-h-screen bg-[#faf8fc] text-[#1a202c] selection:bg-purple-500/30">
       <Navbar />
 
-      <div className="pt-32 pb-20 px-6 container mx-auto max-w-7xl">
+      <div className="pt-32 pb-20 px-6 container mx-auto max-w-7xl relative z-10">
         
+        {/* FONDO DECORATIVO */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-purple-200/40 rounded-full blur-[120px] -z-10 pointer-events-none" />
+
         {/* HEADER */}
         <div className="text-center mb-20 max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-violet-500/20 bg-violet-500/5 text-violet-400 text-xs font-bold uppercase tracking-widest mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-purple-200 bg-white text-purple-600 text-xs font-bold uppercase tracking-widest mb-6 shadow-sm">
             <Shield className="w-4 h-4" />
             <span>Centro de Privacidad</span>
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight">
+          <h1 className="text-4xl md:text-6xl font-black text-[#1a202c] mb-6 tracking-tight">
             Política de Privacidad
           </h1>
-          <p className="text-lg text-neutral-400">
-            Última actualización: Enero 2026. Tu confianza es nuestra prioridad. Aquí explicamos claramente cómo protegemos tus datos.
+          <p className="text-lg text-slate-500">
+            Última actualización: Mayo 2026. Tu privacidad y seguridad son fundamentales para nuestro proyecto de inclusión.
           </p>
         </div>
 
@@ -70,17 +78,17 @@ export default function PrivacyPage() {
           
           {/* --- SIDEBAR DE NAVEGACIÓN (STICKY) --- */}
           <aside className="hidden lg:block lg:col-span-3">
-            <div className="sticky top-32 p-6 rounded-2xl bg-neutral-900/30 border border-white/5 backdrop-blur-sm">
-              <h3 className="text-white font-bold mb-4 px-2">Contenido</h3>
+            <div className="sticky top-32 p-6 rounded-[2rem] bg-white border border-purple-100 shadow-sm">
+              <h3 className="font-bold text-[#1a202c] mb-4 px-2 uppercase tracking-wider text-sm">Contenido</h3>
               <nav className="space-y-1">
                 {tocItems.map((item) => (
                   <button
                     key={item.id}
                     onClick={() => scrollToSection(item.id)}
-                    className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all duration-200 ${
+                    className={`w-full text-left px-4 py-3 rounded-xl text-sm transition-all duration-300 font-medium ${
                       activeSection === item.id 
-                        ? 'bg-violet-500/10 text-violet-400 font-medium translate-x-1' 
-                        : 'text-neutral-400 hover:text-white hover:bg-white/5'
+                        ? 'bg-purple-50 text-purple-600 translate-x-2 border-l-2 border-purple-600' 
+                        : 'text-slate-500 hover:text-purple-600 hover:bg-slate-50 border-l-2 border-transparent'
                     }`}
                   >
                     {item.label}
@@ -91,129 +99,109 @@ export default function PrivacyPage() {
           </aside>
 
           {/* --- CONTENIDO LEGAL --- */}
-          <div className="lg:col-span-9 space-y-16 text-justify leading-relaxed">
+          <div className="lg:col-span-9 space-y-16 text-justify leading-relaxed text-slate-600">
             
             {/* 1. INTRODUCCIÓN */}
-            <section id="intro">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                <FileText className="w-6 h-6 text-violet-500" /> 1. Introducción
+            <section id="intro" className="scroll-mt-32">
+              <h2 className="text-2xl font-bold text-[#1a202c] mb-6 flex items-center gap-3 border-b border-slate-100 pb-4">
+                <FileText className="w-6 h-6 text-purple-600" /> 1. Introducción
               </h2>
               <p className="mb-4">
-                En <strong>Z&DInteligent.ai</strong> ("nosotros", "nuestro" o "la Empresa"), valoramos su privacidad y nos comprometemos a proteger su información personal. Esta Política de Privacidad explica cómo recopilamos, usamos, divulgamos y protegemos sus datos cuando visita nuestro sitio web o utiliza nuestros servicios de automatización e Inteligencia Artificial.
+                En el proyecto <strong>SilentHelp</strong> ("nosotros" o "la Aplicación"), desarrollado por estudiantes del Instituto Tecnológico de la Gustavo A. Madero, valoramos su privacidad por encima de todo. Esta Política explica cómo tratamos la información al utilizar nuestro simulador y herramientas de traducción de Lengua de Señas Mexicana (LSM).
               </p>
-              <p className="p-4 bg-neutral-900 border-l-4 border-violet-500 text-neutral-300 rounded-r-lg text-sm">
-                Al acceder o utilizar nuestros Servicios, usted acepta las prácticas descritas en esta Política. Si no está de acuerdo con los términos aquí expuestos, le rogamos que no utilice nuestros servicios.
+              <p className="p-5 bg-purple-50 border-l-4 border-purple-600 text-purple-900 rounded-r-xl text-sm font-medium">
+                Al ser una herramienta académica e inclusiva, nuestro objetivo no es recopilar datos comerciales, sino facilitar la comunicación de manera segura y privada.
               </p>
             </section>
 
-            {/* 2. DATOS QUE RECOPILAMOS */}
-            <section id="data-collection">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                <Database className="w-6 h-6 text-violet-500" /> 2. Información que Recopilamos
+            {/* 2. USO DE LA CÁMARA */}
+            <section id="camera-usage" className="scroll-mt-32">
+              <h2 className="text-2xl font-bold text-[#1a202c] mb-6 flex items-center gap-3 border-b border-slate-100 pb-4">
+                <Camera className="w-6 h-6 text-purple-600" /> 2. Privacidad de la Cámara y Procesamiento Local
               </h2>
-              <p className="mb-4">Recopilamos información que usted nos proporciona directamente y datos que se generan automáticamente:</p>
+              <p className="mb-4">Para que SilentHelp pueda traducir la Lengua de Señas Mexicana, requerimos acceso a la cámara de su dispositivo. Queremos ser absolutamente transparentes sobre cómo funciona esto:</p>
               <div className="grid md:grid-cols-2 gap-6 mt-6">
-                <div className="bg-neutral-900/50 p-6 rounded-2xl border border-white/5">
-                  <h3 className="font-bold text-white mb-3 flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-violet-500"></span> Datos Directos
+                <div className="bg-white p-6 rounded-2xl border border-purple-100 shadow-sm">
+                  <h3 className="font-bold text-[#1a202c] mb-3 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-green-500"></span> Procesamiento Local
                   </h3>
-                  <ul className="list-disc pl-5 space-y-2 text-sm text-neutral-400 marker:text-violet-500">
-                    <li>Identificación: Nombre, email, teléfono.</li>
-                    <li>Facturación: Dirección fiscal, método de pago.</li>
-                    <li>Soporte: Contenido de sus mensajes o tickets.</li>
-                  </ul>
+                  <p className="text-sm text-slate-500">
+                    El flujo de video capturado por su cámara se procesa <strong>estrictamente en su dispositivo</strong> (en su navegador o teléfono) mediante algoritmos de Visión por Computadora.
+                  </p>
                 </div>
-                <div className="bg-neutral-900/50 p-6 rounded-2xl border border-white/5">
-                  <h3 className="font-bold text-white mb-3 flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-fuchsia-500"></span> Datos Automáticos
+                <div className="bg-white p-6 rounded-2xl border border-purple-100 shadow-sm">
+                  <h3 className="font-bold text-[#1a202c] mb-3 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-fuchsia-500"></span> Cero Almacenamiento
                   </h3>
-                  <ul className="list-disc pl-5 space-y-2 text-sm text-neutral-400 marker:text-fuchsia-500">
-                    <li>Técnicos: Dirección IP, navegador, sistema operativo.</li>
-                    <li>Uso: Páginas visitadas, tiempo de sesión.</li>
-                    <li>Interacción IA: Logs de chat (anonimizados).</li>
-                  </ul>
+                  <p className="text-sm text-slate-500">
+                    <strong>No grabamos, no guardamos y no transmitimos</strong> su rostro, su entorno ni los videos de sus señas a ningún servidor externo. Una vez que la IA lee la posición de las manos, la imagen se descarta instantáneamente.
+                  </p>
                 </div>
               </div>
             </section>
 
-            {/* 3. USO DE LA INFORMACIÓN */}
-            <section id="usage">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                <Server className="w-6 h-6 text-violet-500" /> 3. Uso de la Información
+            {/* 3. DATOS QUE RECOPILAMOS */}
+            <section id="data-collection" className="scroll-mt-32">
+              <h2 className="text-2xl font-bold text-[#1a202c] mb-6 flex items-center gap-3 border-b border-slate-100 pb-4">
+                <Database className="w-6 h-6 text-purple-600" /> 3. Información Técnica
               </h2>
-              <p>Utilizamos su información para los siguientes fines legítimos:</p>
-              <ul className="list-disc pl-5 mt-4 space-y-3 text-neutral-400 marker:text-violet-500">
-                <li><strong>Operación del Servicio:</strong> Proveer, mantener y mejorar nuestros chatbots y plataformas de automatización.</li>
-                <li><strong>IA y Mejora Continua:</strong> Analizar interacciones para refinar la precisión de nuestros modelos (siempre de forma agregada y segura).</li>
-                <li><strong>Comunicaciones:</strong> Enviarle actualizaciones técnicas, alertas de seguridad y respuestas a sus consultas.</li>
-                <li><strong>Seguridad:</strong> Detectar y prevenir fraudes, abusos o incidentes de seguridad.</li>
+              <p>Aunque no almacenamos video, la plataforma web puede recopilar información técnica básica y anónima para garantizar el funcionamiento del sitio, como:</p>
+              <ul className="list-disc pl-5 mt-4 space-y-3 text-slate-600 marker:text-purple-600">
+                <li><strong>Datos del formulario de contacto:</strong> Si decide escribirnos (nombre y correo), usaremos esa información exclusivamente para responder a su consulta.</li>
+                <li><strong>Estadísticas de uso anónimas:</strong> Información general sobre qué secciones de los módulos educativos se visitan más, para mejorar el contenido didáctico.</li>
+                <li><strong>Rendimiento del dispositivo:</strong> Datos básicos del navegador para asegurar que los modelos de IA corran fluidamente.</li>
               </ul>
             </section>
 
-            {/* 4. IA Y TERCEROS */}
-            <section id="ai-third-parties">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                <Globe className="w-6 h-6 text-violet-500" /> 4. Tecnologías de IA y Terceros
+            {/* 4. TERCEROS */}
+            <section id="ai-third-parties" className="scroll-mt-32">
+              <h2 className="text-2xl font-bold text-[#1a202c] mb-6 flex items-center gap-3 border-b border-slate-100 pb-4">
+                <Globe className="w-6 h-6 text-purple-600" /> 4. Tecnologías de Terceros
               </h2>
               <p className="mb-4">
-                Para proporcionar nuestros servicios de automatización inteligente, utilizamos proveedores de modelos de lenguaje de terceros (como OpenAI, Anthropic, o proveedores de nube como AWS/Vercel).
+                SilentHelp utiliza librerías de código abierto y frameworks de Inteligencia Artificial proporcionados por terceros para la detección de puntos de referencia de las manos (hand-tracking).
               </p>
-              <div className="bg-violet-900/10 border border-violet-500/20 p-6 rounded-xl">
-                <h4 className="font-bold text-violet-300 mb-2">Privacidad en Modelos de IA</h4>
-                <p className="text-sm text-violet-200/80 leading-relaxed">
-                  Los datos enviados a través de nuestros chatbots pueden ser procesados por estos proveedores para generar respuestas. Sin embargo, configuramos nuestros sistemas bajo estándares empresariales para que sus datos <strong>no sean utilizados para entrenar modelos públicos</strong> sin su consentimiento explícito. Priorizamos la confidencialidad de sus datos comerciales.
+              <div className="bg-slate-50 border border-slate-200 p-6 rounded-xl">
+                <p className="text-sm text-slate-600 leading-relaxed">
+                  Estas librerías se ejecutan del lado del cliente. No compartimos información personal identificable con los creadores de estas librerías. Todo el entrenamiento de nuestra Red Neuronal (LSTM) para detectar el vocabulario en LSM se realizó previamente de manera aislada.
                 </p>
               </div>
             </section>
 
             {/* 5. SEGURIDAD */}
-            <section id="security">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                <Lock className="w-6 h-6 text-violet-500" /> 5. Seguridad de los Datos
+            <section id="security" className="scroll-mt-32">
+              <h2 className="text-2xl font-bold text-[#1a202c] mb-6 flex items-center gap-3 border-b border-slate-100 pb-4">
+                <Lock className="w-6 h-6 text-purple-600" /> 5. Seguridad de los Datos
               </h2>
               <p>
-                Implementamos medidas de seguridad técnicas, administrativas y físicas diseñadas para proteger su información contra acceso no autorizado, pérdida o alteración. Esto incluye encriptación SSL/TLS en tránsito y encriptación AES-256 en reposo para datos sensibles. Aunque nos esforzamos por proteger su información, ninguna transmisión por Internet es 100% infalible.
+                Aunque la recopilación de datos es mínima, el sitio web de SilentHelp cuenta con protocolos estándar de seguridad (como certificados SSL) para garantizar que cualquier interacción con la página, como el envío de un correo mediante nuestro formulario de contacto, esté cifrada y segura.
               </p>
             </section>
 
-            {/* 6. DERECHOS ARCO */}
-            <section id="rights">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                <Eye className="w-6 h-6 text-violet-500" /> 6. Sus Derechos (ARCO)
+            {/* 6. DERECHOS */}
+            <section id="rights" className="scroll-mt-32">
+              <h2 className="text-2xl font-bold text-[#1a202c] mb-6 flex items-center gap-3 border-b border-slate-100 pb-4">
+                <Eye className="w-6 h-6 text-purple-600" /> 6. Transparencia y Control
               </h2>
               <p className="mb-4">
-                Usted tiene derechos sobre sus datos personales. Puede solicitar:
+                Usted tiene el control absoluto. En cualquier momento puede:
               </p>
-              <div className="grid md:grid-cols-2 gap-4 text-sm">
-                <div className="p-4 border border-white/5 rounded-lg hover:border-violet-500/30 transition-colors">
-                  <strong className="text-white block mb-1">Acceso</strong>
-                  Conocer qué datos tenemos de usted.
-                </div>
-                <div className="p-4 border border-white/5 rounded-lg hover:border-violet-500/30 transition-colors">
-                  <strong className="text-white block mb-1">Rectificación</strong>
-                  Corregir datos inexactos o desactualizados.
-                </div>
-                <div className="p-4 border border-white/5 rounded-lg hover:border-violet-500/30 transition-colors">
-                  <strong className="text-white block mb-1">Cancelación</strong>
-                  Solicitar la eliminación de sus datos.
-                </div>
-                <div className="p-4 border border-white/5 rounded-lg hover:border-violet-500/30 transition-colors">
-                  <strong className="text-white block mb-1">Oposición</strong>
-                  Oponerse al tratamiento de sus datos.
-                </div>
-              </div>
+              <ul className="list-disc pl-5 space-y-2 text-slate-600 marker:text-purple-600">
+                <li>Revocar el permiso de la cámara directamente desde los ajustes de su navegador o teléfono.</li>
+                <li>Solicitar la eliminación de cualquier correo electrónico que nos haya enviado a través de la sección de contacto.</li>
+              </ul>
             </section>
 
             {/* 7. CONTACTO */}
-            <section id="contact" className="border-t border-neutral-800 pt-10">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                <Mail className="w-6 h-6 text-violet-500" /> 7. Contacto
+            <section id="contact" className="scroll-mt-32 border-t border-purple-100 pt-10">
+              <h2 className="text-2xl font-bold text-[#1a202c] mb-6 flex items-center gap-3">
+                <Mail className="w-6 h-6 text-purple-600" /> 7. Contacto
               </h2>
               <p className="mb-4">
-                Si tiene preguntas sobre esta política o desea ejercer sus derechos, nuestro equipo de privacidad está disponible para ayudarle.
+                Si tiene alguna duda sobre cómo funciona nuestra tecnología o nuestras prácticas de privacidad, el equipo desarrollador está a su disposición.
               </p>
-              <a href="mailto:privacidad@zdinteligent.ai" className="inline-flex items-center gap-2 text-violet-400 hover:text-white transition-colors font-medium">
-                <Mail className="w-4 h-4" /> privacidad@zdinteligent.ai
+              <a href="mailto:contacto@silenthelp.mx" className="inline-flex items-center gap-3 px-6 py-3 bg-white border border-purple-200 rounded-xl text-purple-600 hover:bg-purple-600 hover:text-white transition-all shadow-sm font-bold">
+                <Mail className="w-5 h-5" /> contacto@silenthelp.com
               </a>
             </section>
 
@@ -225,13 +213,13 @@ export default function PrivacyPage() {
   );
 }
 
-// Datos para la tabla de contenidos
-const tocItems = [
+// Datos para la tabla de contenidos con su tipado correspondiente
+const tocItems: TocItem[] = [
   { id: 'intro', label: '1. Introducción' },
-  { id: 'data-collection', label: '2. Datos Recopilados' },
-  { id: 'usage', label: '3. Uso de Información' },
-  { id: 'ai-third-parties', label: '4. IA y Terceros' },
+  { id: 'camera-usage', label: '2. Privacidad de Cámara' },
+  { id: 'data-collection', label: '3. Información Técnica' },
+  { id: 'ai-third-parties', label: '4. Terceros' },
   { id: 'security', label: '5. Seguridad' },
-  { id: 'rights', label: '6. Sus Derechos' },
+  { id: 'rights', label: '6. Transparencia' },
   { id: 'contact', label: '7. Contacto' },
 ];

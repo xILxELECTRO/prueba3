@@ -7,11 +7,12 @@ import {
   Scale, 
   FileText, 
   ShieldAlert, 
-  CreditCard, 
   UserX, 
   RefreshCcw, 
   Globe, 
-  Lock 
+  Lock,
+  Camera,
+  Info
 } from 'lucide-react';
 
 export default function TermsPage() {
@@ -47,22 +48,25 @@ export default function TermsPage() {
   };
 
   return (
-    <main className="min-h-screen bg-black text-neutral-300 selection:bg-fuchsia-500/30">
+    <main className="min-h-screen bg-[#faf8fc] text-[#1a202c] selection:bg-purple-500/30">
       <Navbar />
 
-      <div className="pt-32 pb-20 px-6 container mx-auto max-w-7xl">
+      <div className="pt-32 pb-20 px-6 container mx-auto max-w-7xl relative z-10">
         
+        {/* FONDO DECORATIVO LUMINOSO */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-purple-200/40 rounded-full blur-[120px] -z-10 pointer-events-none" />
+
         {/* HEADER */}
         <div className="text-center mb-20 max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-fuchsia-500/20 bg-fuchsia-500/5 text-fuchsia-400 text-xs font-bold uppercase tracking-widest mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-purple-200 bg-white text-purple-600 text-xs font-bold uppercase tracking-widest mb-6 shadow-sm">
             <Scale className="w-4 h-4" />
-            <span>Marco Legal</span>
+            <span>Marco Educativo y Legal</span>
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight">
+          <h1 className="text-4xl md:text-6xl font-black text-[#1a202c] mb-6 tracking-tight">
             Términos y Condiciones de Uso
           </h1>
-          <p className="text-lg text-neutral-400">
-            Última actualización: Enero 2026. Por favor lea estos términos cuidadosamente antes de utilizar nuestros servicios de Inteligencia Artificial.
+          <p className="text-lg text-slate-500">
+            Última actualización: Mayo 2026. Por favor, lea estos términos cuidadosamente antes de utilizar nuestro simulador educativo de Inteligencia Artificial.
           </p>
         </div>
 
@@ -70,17 +74,17 @@ export default function TermsPage() {
           
           {/* --- SIDEBAR DE NAVEGACIÓN (STICKY) --- */}
           <aside className="hidden lg:block lg:col-span-3">
-            <div className="sticky top-32 p-6 rounded-2xl bg-neutral-900/30 border border-white/5 backdrop-blur-sm">
-              <h3 className="text-white font-bold mb-4 px-2">Tabla de Contenidos</h3>
+            <div className="sticky top-32 p-6 rounded-[2rem] bg-white border border-purple-100 shadow-sm">
+              <h3 className="font-bold text-[#1a202c] mb-4 px-2 uppercase tracking-wider text-sm">Contenido</h3>
               <nav className="space-y-1">
                 {tocItems.map((item) => (
                   <button
                     key={item.id}
                     onClick={() => scrollToSection(item.id)}
-                    className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all duration-200 ${
+                    className={`w-full text-left px-4 py-3 rounded-xl text-sm transition-all duration-300 font-medium ${
                       activeSection === item.id 
-                        ? 'bg-fuchsia-500/10 text-fuchsia-400 font-medium translate-x-1' 
-                        : 'text-neutral-400 hover:text-white hover:bg-white/5'
+                        ? 'bg-purple-50 text-purple-600 translate-x-2 border-l-2 border-purple-600' 
+                        : 'text-slate-500 hover:text-purple-600 hover:bg-slate-50 border-l-2 border-transparent'
                     }`}
                   >
                     {item.label}
@@ -91,123 +95,86 @@ export default function TermsPage() {
           </aside>
 
           {/* --- CONTENIDO LEGAL --- */}
-          <div className="lg:col-span-9 space-y-16">
+          <div className="lg:col-span-9 space-y-16 text-justify leading-relaxed text-slate-600">
             
             {/* 1. INTRODUCCIÓN */}
-            <section id="intro" className="legal-section">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                <FileText className="w-6 h-6 text-fuchsia-500" /> 1. Introducción y Aceptación
+            <section id="intro" className="scroll-mt-32">
+              <h2 className="text-2xl font-bold text-[#1a202c] mb-6 flex items-center gap-3 border-b border-slate-100 pb-4">
+                <FileText className="w-6 h-6 text-purple-600" /> 1. Naturaleza del Proyecto y Aceptación
               </h2>
               <p className="mb-4">
-                Bienvenido a <strong>Z&DInteligent.ai</strong> ("Nosotros", "La Empresa"). Estos Términos y Condiciones ("Términos") rigen el acceso y uso de nuestra plataforma, software, APIs y servicios de automatización (colectivamente, el "Servicio").
+                Bienvenido a la plataforma web de <strong>SilentHelp</strong>. Este sitio y su simulador interactivo corresponden a una iniciativa estrictamente académica desarrollada por estudiantes del Instituto Tecnológico de la Gustavo A. Madero dentro de la materia de Ingeniería del Conocimiento.
               </p>
-              <p className="p-4 bg-fuchsia-900/10 border-l-4 border-fuchsia-500 text-fuchsia-200 rounded-r-lg text-sm">
-                AL HACER CLIC EN "ACEPTAR", REGISTRARSE O UTILIZAR EL SERVICIO, USTED ACEPTA VINCULARSE LEGALMENTE A ESTOS TÉRMINOS. SI ESTÁ SUSCRIBIENDO ESTE ACUERDO EN NOMBRE DE UNA EMPRESA, USTED DECLARA QUE TIENE LA AUTORIDAD PARA VINCULAR A DICHA ENTIDAD.
+              <p className="p-5 bg-purple-50 border-l-4 border-purple-600 text-purple-900 rounded-r-xl text-sm font-medium">
+                AL UTILIZAR EL SIMULADOR O RECORRER NUESTROS MÓDULOS EDUCATIVOS, USTED MANIFIESTA SU CONFORMIDAD CON ESTOS TÉRMINOS DE USO enfocado al aprendizaje de la Lengua de Señas Mexicana (LSM).
               </p>
             </section>
 
-            {/* 2. CUENTAS */}
-            <section id="accounts">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                <Lock className="w-6 h-6 text-fuchsia-500" /> 2. Cuentas y Seguridad
+            {/* 2. CONDICIONES DE USO DEL SIMULADOR */}
+            <section id="usage-rules" className="scroll-mt-32">
+              <h2 className="text-2xl font-bold text-[#1a202c] mb-6 flex items-center gap-3 border-b border-slate-100 pb-4">
+                <Camera className="w-6 h-6 text-purple-600" /> 2. Condiciones del Simulador y Uso de Cámara
               </h2>
-              <ul className="list-disc pl-5 space-y-3 text-neutral-400 marker:text-fuchsia-500">
-                <li><strong>Registro:</strong> Usted debe proporcionar información precisa y completa al crear su cuenta. Es su responsabilidad mantener esta información actualizada.</li>
-                <li><strong>Seguridad:</strong> Usted es responsable de salvaguardar la contraseña que utiliza para acceder al Servicio. Z&DInteligent.ai no será responsable de ninguna pérdida o daño derivado de su incumplimiento en proteger sus credenciales.</li>
-                <li><strong>Uso Compartido:</strong> Está prohibido compartir credenciales de acceso con terceros no autorizados. Cada licencia de usuario es personal e intransferible.</li>
+              <p className="mb-4">Para garantizar una experiencia interactiva óptima y un entorno seguro para todos los estudiantes y usuarios, se establecen las siguientes reglas:</p>
+              <ul className="list-disc pl-5 space-y-3 text-slate-600 marker:text-purple-600">
+                <li><strong>Finalidad Didáctica:</strong> El simulador y los diccionarios integrados deben ser utilizados exclusivamente con fines de aprendizaje, práctica personal o demostración académica de LSM.</li>
+                <li><strong>Permisos del Dispositivo:</strong> El uso del reconocimiento en tiempo real requiere el acceso a la cámara. Este permiso es otorgado voluntariamente por el usuario y puede revocarse en cualquier momento desde el navegador.</li>
+                <li><strong>Buen Uso:</strong> Queda estrictamente prohibido intentar vulnerar el código fuente, saturar las consultas del asistente interactivo o usar la interfaz para fines ajenos a la inclusión social.</li>
               </ul>
             </section>
 
-            {/* 3. PROPIEDAD INTELECTUAL */}
-            <section id="ip">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                <ShieldAlert className="w-6 h-6 text-fuchsia-500" /> 3. Propiedad Intelectual y Contenido
+            {/* 3. PROPIEDAD INTELECTUAL ACADÉMICA */}
+            <section id="ip" className="scroll-mt-32">
+              <h2 className="text-2xl font-bold text-[#1a202c] mb-6 flex items-center gap-3 border-b border-slate-100 pb-4">
+                <ShieldAlert className="w-6 h-6 text-purple-600" /> 3. Propiedad Intelectual y Derechos de Autor
               </h2>
               <div className="space-y-4">
-                <p><strong>3.1 Propiedad de la Plataforma:</strong> El Servicio, incluyendo su código fuente, algoritmos, diseño, logotipos y software subyacente, es propiedad exclusiva de Z&DInteligent.ai y está protegido por leyes de derechos de autor y propiedad industrial internacionales.</p>
-                <p><strong>3.2 Sus Datos (Input):</strong> Usted conserva todos los derechos sobre los datos, textos y archivos que suba a la plataforma ("Datos del Usuario").</p>
-                <p><strong>3.3 Resultados (Output):</strong> Z&DInteligent.ai le cede a usted todos los derechos, títulos e intereses sobre el contenido generado por la IA como resultado de sus inputs, sujeto al cumplimiento de estos términos y al pago de las tarifas correspondientes.</p>
+                <p><strong>3.1 Derechos del Proyecto:</strong> El diseño de la interfaz, el logotipo oficial, la estructura de componentes en React, los estilos y los modelos de datos entrenados para la traducción de LSM son propiedad intelectual del equipo desarrollador del ITGAM.</p>
+                <p><strong>3.2 Herramientas de Terceros:</strong> Hacemos uso legítimo de librerías de código abierto (como Lucide Icons, Framer Motion, GSAP y MediaPipe) cuyos derechos pertenecen a sus respectivos autores conforme a sus licencias correspondientes.</p>
               </div>
             </section>
 
-            {/* 4. IA Y RESPONSABILIDAD */}
-            <section id="ai-disclaimer">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                <RefreshCcw className="w-6 h-6 text-orange-500" /> 4. Naturaleza de la Inteligencia Artificial
+            {/* 4. EXCEPCIÓN DE RESPONSABILIDAD DE LA IA */}
+            <section id="ai-disclaimer" className="scroll-mt-32">
+              <h2 className="text-2xl font-bold text-[#1a202c] mb-6 flex items-center gap-3 border-b border-slate-100 pb-4">
+                <RefreshCcw className="w-6 h-6 text-purple-600" /> 4. Alcance Técnico de la Inteligencia Artificial
               </h2>
-              <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6">
-                <p className="mb-4">
-                  El Usuario reconoce y acepta que los servicios basados en Inteligencia Artificial (IA) y Modelos de Lenguaje (LLMs):
+              <div className="bg-white border border-purple-100 shadow-sm rounded-2xl p-6">
+                <p className="mb-4 font-medium text-[#1a202c]">
+                  El usuario reconoce y acepta las siguientes consideraciones respecto a la naturaleza del procesamiento con Inteligencia Artificial (IA):
                 </p>
-                <ul className="space-y-2 text-sm text-neutral-400">
-                  <li className="flex gap-2"><span className="text-orange-500">⚠</span> Pueden generar información incorrecta, ofensiva o sesgada ("Alucinaciones").</li>
-                  <li className="flex gap-2"><span className="text-orange-500">⚠</span> No deben utilizarse como única fuente para la toma de decisiones críticas (médicas, legales, financieras).</li>
-                  <li className="flex gap-2"><span className="text-orange-500">⚠</span> La calidad del resultado depende directamente de la calidad de las instrucciones (prompts) proporcionadas por el Usuario.</li>
+                <ul className="space-y-3 text-sm text-slate-500">
+                  <li className="flex gap-2"><span className="text-purple-600 font-bold">•</span> La precisión del simulador puede verse afectada por factores externos como la iluminación del entorno, la calidad de la cámara o la velocidad del dispositivo.</li>
+                  <li className="flex gap-2"><span className="text-purple-600 font-bold">•</span> Al ser un prototipo en fase beta enfocado a la Ingeniería del Conocimiento, la traducción automática no debe ser tomada como una certificación oficial de interpretación lingüística en situaciones críticas (legales o médicas).</li>
                 </ul>
-                <p className="mt-4 font-medium text-white">
-                  Z&DInteligent.ai no garantiza la precisión absoluta de los resultados generados por la IA y se deslinda de cualquier responsabilidad por el uso que el Usuario dé a dicha información.
-                </p>
               </div>
             </section>
 
-            {/* 5. PAGOS */}
-            <section id="payments">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                <CreditCard className="w-6 h-6 text-fuchsia-500" /> 5. Pagos, Facturación y Reembolsos
-              </h2>
-              <p className="mb-4">
-                El uso de ciertas funciones requiere el pago de tarifas de suscripción. Al contratar un plan de pago:
-              </p>
-              <ul className="list-disc pl-5 space-y-2 text-neutral-400 marker:text-fuchsia-500">
-                <li><strong>Facturación Automática:</strong> Las suscripciones se renuevan automáticamente al final de cada ciclo de facturación a menos que se cancelen con al menos 24 horas de antelación.</li>
-                <li><strong>Impuestos:</strong> Todos los precios mostrados son netos. El Usuario es responsable de pagar los impuestos aplicables (como el IVA en México) que se desglosarán en la factura.</li>
-                <li><strong>Política de Reembolsos:</strong> Debido a la naturaleza digital del servicio y los costos computacionales incurridos, <strong>no ofrecemos reembolsos</strong> por períodos parciales o meses no utilizados, salvo que la ley local exija lo contrario.</li>
-              </ul>
-            </section>
-
-            {/* 6. INDEMNIZACIÓN */}
-            <section id="indemnification">
-              <h2 className="text-2xl font-bold text-white mb-6">6. Indemnización</h2>
-              <p>
-                Usted acepta defender, indemnizar y eximir de responsabilidad a Z&DInteligent.ai, sus directores, empleados y afiliados, frente a cualquier reclamo, daño, obligación, pérdida, responsabilidad, costo o deuda y gasto (incluyendo honorarios de abogados) que surjan de: (i) su uso y acceso al Servicio; (ii) su violación de cualquier término de estos Términos; o (iii) su violación de cualquier derecho de un tercero, incluyendo derechos de autor o privacidad.
-              </p>
-            </section>
-
-            {/* 7. TERMINACIÓN */}
-            <section id="termination">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                <UserX className="w-6 h-6 text-red-500" /> 7. Suspensión y Terminación
-              </h2>
-              <p className="mb-4">
-                Podemos terminar o suspender su cuenta de forma inmediata, sin previo aviso ni responsabilidad, por cualquier motivo, incluyendo, entre otros:
-              </p>
-              <div className="grid md:grid-cols-2 gap-4 text-sm">
-                <div className="bg-neutral-900 p-4 rounded-lg border border-neutral-800">
-                  <span className="text-red-400 font-bold block mb-1">Falta de Pago</span>
-                  Si sus métodos de pago son rechazados tras múltiples intentos.
-                </div>
-                <div className="bg-neutral-900 p-4 rounded-lg border border-neutral-800">
-                  <span className="text-red-400 font-bold block mb-1">Uso Indebido</span>
-                  Uso del servicio para spam, actividades ilegales o ingeniería inversa.
-                </div>
-              </div>
-            </section>
-
-            {/* 8. LEY APLICABLE */}
-            <section id="law">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                <Globe className="w-6 h-6 text-fuchsia-500" /> 8. Ley Aplicable y Jurisdicción
+            {/* 5. AUSENCIA DE FINES COMERCIALES */}
+            <section id="no-commercial" className="scroll-mt-32">
+              <h2 className="text-2xl font-bold text-[#1a202c] mb-6 flex items-center gap-3 border-b border-slate-100 pb-4">
+                <Info className="w-6 h-6 text-purple-600" /> 5. Carácter No Comercial y Gratuidad
               </h2>
               <p>
-                Estos Términos se regirán por las leyes de los <strong>Estados Unidos Mexicanos</strong>. Cualquier disputa relacionada con estos Términos se someterá a la jurisdicción exclusiva de los tribunales competentes en el Estado de México o Ciudad de México, renunciando el Usuario a cualquier otro fuero que pudiera corresponderle por su domicilio presente o futuro.
+                SilentHelp es una plataforma 100% gratuita. No existen planes de suscripción, tarifas ocultas, cargos por procesamiento computacional ni venta de licencias de uso. Cualquier intento de cobro a nombre de este proyecto académico debe ser reportado inmediatamente.
+              </p>
+            </section>
+
+            {/* 6. LEY APLICABLE */}
+            <section id="law" className="scroll-mt-32">
+              <h2 className="text-2xl font-bold text-[#1a202c] mb-6 flex items-center gap-3 border-b border-slate-100 pb-4">
+                <Globe className="w-6 h-6 text-purple-600" /> 6. Legislación y Marco Normativo
+              </h2>
+              <p>
+                Al ser un proyecto desarrollado e implementado en Ecatepec de Morelos, Estado de México, estos términos se rigen en concordancia con la legislación aplicable en los <strong>Estados Unidos Mexicanos</strong> y los lineamientos internos de proyectos de innovación tecnológica del Tecnológico Nacional de México (TecNM).
               </p>
             </section>
 
             {/* CONTACTO */}
-            <div className="border-t border-neutral-800 pt-10 mt-20">
-              <h3 className="text-xl font-bold text-white mb-2">¿Dudas Legales?</h3>
-              <p className="text-neutral-500">
-                Si tiene preguntas sobre cómo interpretamos estos términos, contáctenos en: <a href="mailto:legal@zdinteligent.ai" className="text-fuchsia-400 hover:text-white underline decoration-fuchsia-500/30">legal@zdinteligent.ai</a>
+            <div className="border-t border-purple-100 pt-10 mt-20" id="legal-contact">
+              <h3 className="text-xl font-bold text-[#1a202c] mb-2">¿Dudas sobre los Términos?</h3>
+              <p className="text-slate-500">
+                Si deseas conocer más detalles técnicos o regulatorios sobre nuestra entrega de Ingeniería del Conocimiento, puedes contactar al equipo en: <a href="mailto:contacto@silenthelp.mx" className="text-purple-600 hover:text-purple-800 underline font-bold">contacto@silenthelp.com</a>
               </p>
             </div>
 
@@ -219,14 +186,13 @@ export default function TermsPage() {
   );
 }
 
-// Datos para la tabla de contenidos
+// Datos para la tabla de contenidos adaptada
 const tocItems = [
-  { id: 'intro', label: '1. Introducción' },
-  { id: 'accounts', label: '2. Cuentas y Seguridad' },
+  { id: 'intro', label: '1. Naturaleza del Proyecto' },
+  { id: 'usage-rules', label: '2. Uso del Simulador' },
   { id: 'ip', label: '3. Propiedad Intelectual' },
-  { id: 'ai-disclaimer', label: '4. Aviso sobre IA' },
-  { id: 'payments', label: '5. Pagos y Reembolsos' },
-  { id: 'indemnification', label: '6. Indemnización' },
-  { id: 'termination', label: '7. Terminación' },
-  { id: 'law', label: '8. Ley Aplicable' },
+  { id: 'ai-disclaimer', label: '4. Alcance de la IA' },
+  { id: 'no-commercial', label: '5. Carácter Gratuito' },
+  { id: 'law', label: '6. Legislación' },
+  { id: 'legal-contact', label: '7. Dudas y Preguntas' },
 ];

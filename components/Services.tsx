@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef } from 'react';
-import { Bot, Zap, BarChart3 } from 'lucide-react';
+import { BookOpen, Camera, AlertTriangle } from 'lucide-react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -10,31 +10,31 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-// Datos de los servicios
+// Datos de SilentHelp
 const services = [
   {
     id: "01",
-    tag: "NEURAL_NET",
-    title: "IA Core",
-    desc: "Automatización neuronal y procesamiento de lenguaje natural avanzado.",
-    icon: <Bot className="w-8 h-8 text-white" />,
-    image: "/logo.png", 
+    tag: "APRENDIZAJE",
+    title: "Módulos Educativos",
+    desc: "Lecciones interactivas para dominar el abecedario y vocabulario cotidiano.",
+    icon: <BookOpen className="w-8 h-8 text-white" />,
+    image: "https://images.unsplash.com/photo-1573164713988-8665fc963095?q=80&w=1000&auto=format&fit=crop", 
   },
   {
     id: "02",
-    tag: "AUTO_SALES",
-    title: "Ventas Autónomas",
-    desc: "Agentes de cierre 24/7 que califican y convierten leads automáticamente.",
-    icon: <Zap className="w-8 h-8 text-white" />,
-    image: "/logo1.png",
+    tag: "TIEMPO REAL",
+    title: "Traducción con IA",
+    desc: "Uso de la cámara de tu dispositivo para interpretar tus señas al instante.",
+    icon: <Camera className="w-8 h-8 text-white" />,
+    image: "https://images.unsplash.com/photo-1516534775068-ba3e7458af70?q=80&w=1000&auto=format&fit=crop",
   },
   {
     id: "03",
-    tag: "PREDICT_V4",
-    title: "Data Predictiva",
-    desc: "Análisis en tiempo real para anticipar tendencias del mercado.",
-    icon: <BarChart3 className="w-8 h-8 text-white" />,
-    image: "/logo2.png",
+    tag: "SEGURIDAD",
+    title: "Modo de Emergencia",
+    desc: "Traducción rápida y acceso a frases de auxilio predeterminadas para situaciones críticas.",
+    icon: <AlertTriangle className="w-8 h-8 text-white" />,
+    image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1000&auto=format&fit=crop",
   }
 ];
 
@@ -53,7 +53,7 @@ export default function Services() {
     let isGapAnimationCompleted = false;
     let isFlipAnimationCompleted = false;
 
-    // --- LÓGICA DESKTOP (> 800px) ---
+    // --- LÓGICA DESKTOP (Computadoras - Pantalla Completa) ---
     mm.add("(min-width: 800px)", () => {
       ScrollTrigger.create({
         trigger: container.current,
@@ -115,138 +115,122 @@ export default function Services() {
       });
     });
 
-    // --- LÓGICA MOBILE (< 800px) ---
+    // --- LÓGICA MOBILE (Celulares y ventanas angostas) ---
     mm.add("(max-width: 799px)", () => {
+      // 1. Título visible
       gsap.set(headerTitle, { opacity: 1, y: 0 });
-      gsap.set(cardContainer, { width: "100%", gap: "20px", transform: "none" });
+      // 2. Columna vertical con separación
+      gsap.set(cardContainer, { width: "100%", gap: "24px", transform: "none" });
+      // 3. Tarjetas inician en la cara blanca (0 grados)
       gsap.set(".service-card", { borderRadius: "24px", rotationY: 0 });
+
+      // 4. NUEVA ANIMACIÓN: Cada tarjeta gira individualmente al hacer scroll
+      const cards = gsap.utils.toArray(".service-card");
+      cards.forEach((card: any) => {
+        gsap.to(card, {
+          scrollTrigger: {
+            trigger: card,
+            start: "top 65%", // La animación ocurre cuando la tarjeta llega al 65% de la pantalla
+            toggleActions: "play none none reverse" // Gira al bajar, regresa a blanco al subir
+          },
+          rotationY: 180, // Gira a la cara morada
+          duration: 0.8,
+          ease: "back.out(1.2)"
+        });
+      });
     });
 
   }, { scope: container });
 
   return (
     <section 
+      id="beneficios"
       ref={container} 
-      className="relative w-full h-screen bg-transparent text-white overflow-hidden flex flex-col items-center justify-center px-4 md:px-8"
+      className="relative w-full min-h-screen md:h-screen bg-transparent text-[#1a202c] flex flex-col items-center justify-center px-6 md:px-8 z-20 py-24 md:py-0 overflow-hidden"
     >
-      
       {/* --- HEADER --- */}
       <div 
         ref={headerRef} 
-        className="absolute top-[10%] md:top-[15%] left-0 w-full z-20 text-center pointer-events-none"
+        className="relative md:absolute md:top-[15%] left-0 w-full z-20 text-center pointer-events-none mb-12 md:mb-0"
       >
-        <h2 className="text-4xl md:text-7xl font-bold tracking-tight opacity-0 translate-y-10">
-          Inteligencia <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-fuchsia-500">Modular</span>
+        <h2 className="text-4xl md:text-6xl font-black tracking-tight text-[#1a202c] md:opacity-0 md:translate-y-10">
+          Nuestros <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-fuchsia-500">Pilares</span>
         </h2>
       </div>
 
       {/* --- CONTAINER DE CARTAS --- */}
       <div 
         ref={cardContainerRef}
-        className="card-container relative flex w-full md:w-[75%] h-[55vh] md:h-[60vh] perspective-[1000px]"
+        className="card-container relative flex flex-col md:flex-row w-full md:w-[75%] h-auto md:h-[60vh] gap-6 md:gap-0 perspective-[1000px]"
         style={{ perspective: "1000px" }}
       >
-        
         {services.map((item, i) => {
           const initialRadius = i === 0 ? "24px 0 0 24px" : i === 2 ? "0 24px 24px 0" : "0px";
           
           return (
             <div
               key={item.id}
-              className={`service-card service-card-${i} group relative flex-1 h-full cursor-pointer`}
+              className={`service-card service-card-${i} group relative flex-1 min-h-[350px] md:min-h-0 md:h-full cursor-pointer shadow-lg rounded-3xl md:rounded-none`}
               style={{ 
                 transformStyle: 'preserve-3d',
                 transformOrigin: 'center center',
-                borderRadius: initialRadius
+                borderRadius: 'inherit' 
               }}
             >
-              {/* ==================================================================================
-                  CARA FRONTAL: DISEÑO LIMPIO
-              ================================================================================== */}
+              {/* === CARA FRONTAL (BLANCA) - Ahora visible en celular === */}
               <div 
-                className="card-front absolute inset-0 w-full h-full overflow-hidden backface-hidden border border-white/10 bg-neutral-900"
+                className="card-front absolute inset-0 w-full h-full overflow-hidden backface-hidden bg-white border border-purple-100"
                 style={{ backfaceVisibility: 'hidden', borderRadius: 'inherit' }}
               >
-                {/* Imagen de fondo */}
                 <img 
                   src={item.image} 
                   alt={item.title} 
-                  className="absolute inset-0 w-full h-full object-cover opacity-50 transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0 mix-blend-luminosity"
+                  className="absolute inset-0 w-full h-full object-cover opacity-10 transition-transform duration-700 group-hover:scale-110 mix-blend-multiply"
                 />
-                
-                {/* Overlay Gradiente sofisticado */}
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-neutral-900/20 to-neutral-950/90" />
-                
-                {/* --- ELIMINADO: System Online (arriba a la izquierda) --- */}
-                {/* --- ELIMINADO: Botón Plus (arriba a la derecha) --- */}
-
-                {/* Contenido Inferior */}
+                <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-transparent" />
                 <div className="absolute bottom-0 left-0 w-full p-8">
-                   <div className="border-b border-white/10 pb-4">
-                      <span className="text-violet-400 text-xs font-mono mb-1 block tracking-wider">
+                   <div className="border-b border-purple-100 pb-4">
+                      <span className="text-purple-600 text-xs font-bold font-mono mb-1 block tracking-widest">
                         // {item.tag}
                       </span>
-                      <h3 className="text-3xl font-bold text-white tracking-tight">{item.title}</h3>
+                      <h3 className="text-3xl font-black text-[#1a202c] tracking-tight">{item.title}</h3>
                    </div>
-                   
-                   {/* Número de fondo sutil */}
-                   <span className="absolute bottom-6 right-6 text-6xl font-black text-white/5 opacity-30 select-none pointer-events-none">
+                   <span className="absolute bottom-6 right-6 text-6xl font-black text-purple-600/5 opacity-50 select-none pointer-events-none">
                      {item.id}
                    </span>
-                   
-                   {/* --- ELIMINADO: Texto "Ver Especificaciones" --- */}
                 </div>
               </div>
 
-              {/* ==================================================================================
-                  CARA TRASERA: NÚCLEO DE DATOS
-              ================================================================================== */}
+              {/* === CARA TRASERA (MORADA) === */}
               <div 
-                className="card-back absolute inset-0 w-full h-full overflow-hidden flex flex-col items-center justify-center text-center p-6 md:p-8 backface-hidden bg-black"
+                className="card-back absolute inset-0 w-full h-full overflow-hidden flex flex-col items-center justify-center text-center p-6 md:p-8 backface-hidden bg-gradient-to-br from-purple-800 to-fuchsia-900 border border-purple-500/50 rounded-3xl md:rounded-none"
                 style={{ 
                   backfaceVisibility: 'hidden', 
                   transform: 'rotateY(180deg)',
                   borderRadius: 'inherit'
                 }}
               >
-                {/* Fondo de Ruido (Noise) para textura */}
                 <div className="absolute inset-0 opacity-[0.15] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
-                
-                {/* Glow Central */}
-                <div className="absolute inset-0 bg-gradient-to-b from-violet-900/20 to-black pointer-events-none"></div>
-
-                {/* Borde Brillante Interno */}
-                <div className="absolute inset-2 border border-white/10 rounded-[20px] pointer-events-none group-hover:border-violet-500/30 transition-colors"></div>
-
-                {/* Contenido Trasero */}
                 <div className="relative z-10 flex flex-col items-center w-full">
-                  
-                  {/* Icono flotante con efecto de energía */}
                   <div className="relative mb-8 group-hover:scale-110 transition-transform duration-500">
-                    <div className="absolute inset-0 bg-violet-500 blur-2xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
-                    <div className="relative w-16 h-16 rounded-2xl bg-gradient-to-br from-neutral-800 to-black border border-white/10 flex items-center justify-center shadow-2xl">
+                    <div className="absolute inset-0 bg-white blur-xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
+                    <div className="relative w-16 h-16 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center shadow-2xl backdrop-blur-sm">
                        {item.icon}
                     </div>
                   </div>
-                  
                   <h3 className="text-2xl font-bold mb-4 text-white">{item.title}</h3>
-                  
-                  {/* Descripción con línea decorativa */}
                   <div className="relative py-4">
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[1px] bg-violet-500/50"></div>
-                    <p className="text-sm text-neutral-400 leading-relaxed max-w-[260px]">
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[2px] bg-fuchsia-400"></div>
+                    <p className="text-sm text-purple-100 leading-relaxed max-w-[260px] font-light">
                         {item.desc}
                     </p>
-                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-[1px] bg-violet-500/50"></div>
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-[2px] bg-fuchsia-400"></div>
                   </div>
-
-                  {/* --- ELIMINADO: Botón Acceder --- */}
                 </div>
               </div>
             </div>
           );
         })}
-
       </div>
     </section>
   );

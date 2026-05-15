@@ -8,23 +8,18 @@ export default function Spotlight() {
   const mouseY = useMotionValue(0);
 
   useEffect(() => {
-    // Esta función actualiza las coordenadas cada vez que mueves el mouse
     function handleMouseMove({ clientX, clientY }: MouseEvent) {
       mouseX.set(clientX);
       mouseY.set(clientY);
     }
-
-    // Escuchamos el evento en toda la ventana (window)
     window.addEventListener('mousemove', handleMouseMove);
-
-    // Limpieza al desmontar
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, [mouseX, mouseY]);
 
-  // Creamos el gradiente dinámico
+  // Gradiente dinámico ajustado para fondo claro (Morado sutil)
   const background = useMotionTemplate`radial-gradient(
     600px circle at ${mouseX}px ${mouseY}px,
-    rgba(124, 58, 237, 0.10), /* Color Violeta muy sutil (0.10 opacidad) */
+    rgba(168, 85, 247, 0.08), 
     transparent 80%
   )`;
 
